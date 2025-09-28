@@ -27,9 +27,27 @@ import Gramjanganna from "./pages/Gramjanganna";
 import GramDhurdhvani from "./pages/GramDhurdhvani";
 import GramHelpline from "./pages/GramHelpline";
 import GramRugnalay from "./pages/GramRugnalay";
+
+// उपक्रम pages
 import SwachhGav from "./pages/SwachhGav";
 import Vikeltepikel from "./pages/Vikeltepikel";
-// later you will add -> GrampanchayatNaksha, GrampanchayatSadasya, GramsabhaNirnay, etc.
+import Grammajhikutumb from "./pages/Grammajhikutumb";
+import GramTantamuktGav from "./pages/GramTantamuktGav";
+import GramJalyuktShivar from "./pages/GramJalyuktShivar";
+import GramTushargav from "./pages/GramTushargav";
+import GramRotiPurakVyavsay from "./pages/GramRotiPurakVyavsay";
+import GramGavadoli from "./pages/GramGavadoli";
+import GramMatdarNondani from "./pages/GramMatdarNondani";
+import GramSarvaShikshaAbhiyan from "./pages/GramSarvaShikshaAbhiyan";
+import GramKridaSpardha from "./pages/GramKridaSpardha";
+import GramArogyaShibir from "./pages/GramArogyaShibir";
+import GramKachraNivaran from "./pages/GramKachraNivaran";
+import GramBiogasNirmiti from "./pages/GramBiogasNirmiti";
+import GramSendriyaKhat from "./pages/GramSendriyaKhat";
+import GramRajyaSarkarYojna from "./pages/GramRajyaSarkarYojna";
+import GramKendraSarkarYojana from "./pages/GramKendraSarkarYojana";
+
+
 
 function App() {
   const theme = useTheme();
@@ -93,20 +111,36 @@ function App() {
           <Route path="/ग्रामपंचायत-माहिती" element={<GrampanchayatMahiti />} />
           <Route path="/ग्रामपंचायत-नकाशा" element={<GrampanchayatNaksha />} />
           <Route path="/ग्रामपंचायत-सदस्य" element={<GrampanchayatSadasya />} />
-          <Route path="/ग्रामपंचायत-ग्रामसभेचे निर्णय" element={<GramsabhaNirnay />} />
+          <Route path="/ग्रामपंचायत-ग्रामसभेचे-निर्णय" element={<GramsabhaNirnay />} />
           <Route path="/ग्रामपंचायत-पुरस्कार" element={<GramPuraskar />} />
-          <Route path="/ग्रामपंचायत-सण/उत्सव" element={<Festival />} />
+          <Route path="/ग्रामपंचायत-सण-उत्सव" element={<Festival />} />
           <Route path="/ग्रामपंचायत-सुविधा" element={<GramSuvidha />} />
-          <Route path="/ग्रामपंचायत-पर्यटन सथळे" element={<Gramparyatansthale/>} />
-          <Route path="/निर्देशिका-जनगणना" element={<Gramjanganna/>} />
-          <Route path="/निर्देशिका-दूरध्वनी क्रमांक" element={<GramDhurdhvani/>} />
+          <Route path="/ग्रामपंचायत-पर्यटन-स्थळे" element={<Gramparyatansthale />} />
+          <Route path="/निर्देशिका-जनगणना" element={<Gramjanganna />} />
+          <Route path="/निर्देशिका-दूरध्वनी-क्रमांक" element={<GramDhurdhvani />} />
           <Route path="/निर्देशिका-हेल्पलाईन" element={<GramHelpline />} />
           <Route path="/निर्देशिका-रुग्णालय" element={<GramRugnalay />} />
+
+          {/* उपक्रम → All initiatives */}
           <Route path="/उपक्रम-स्वच्छ गाव" element={<SwachhGav />} />
           <Route path="/उपक्रम-विकेल-ते-पिकेल" element={<Vikeltepikel />} />
-        
+          <Route path="/उपक्रम-माझं-कुटुंब माझी-जवाबदारी" element={<Grammajhikutumb />} />
+          <Route path="/उपक्रम-तंटामुक्त गाव" element={<GramTantamuktGav />} />
+          <Route path="/उपक्रम-जलयुक्त शिवार" element={<GramJalyuktShivar />} />
+          <Route path="/उपक्रम-तुषारगाव" element={<GramTushargav />} />
+          <Route path="/उपक्रम-रोती पूरक व्यवसाय" element={<GramRotiPurakVyavsay />} />
+          <Route path="/उपक्रम-गादोली" element={<GramGavadoli />} />
+          <Route path="/उपक्रम-मतदार नोंदणी" element={<GramMatdarNondani />} />
+          <Route path="/उपक्रम-सर्व शिक्षा अभियान" element={<GramSarvaShikshaAbhiyan />} />
+          <Route path="/उपक्रम-क्रीडा स्पर्धा" element={<GramKridaSpardha />} />
+          <Route path="/उपक्रम-आरोग्य शिबिर" element={<GramArogyaShibir />} />
+          <Route path="/उपक्रम-कचऱ्याचे नियोजन" element={<GramKachraNivaran />} />
+          <Route path="/उपक्रम-बायोगॅस निर्मिती" element={<GramBiogasNirmiti />} />
+          <Route path="/उपक्रम-सेंद्रिय खत निर्मिती" element={<GramSendriyaKhat />} />
+          <Route path="/योजना-राज्य सरकार योजना" element={<GramRajyaSarkarYojna />} />
+          <Route path="/योजना-केंद्र सरकार योजना" element={<GramKendraSarkarYojana />} />
 
-          {/* More routes will come here for नक्शा, सदस्य, ग्रामसभा निर्णय, etc. */}
+  
         </Routes>
       </Box>
 
