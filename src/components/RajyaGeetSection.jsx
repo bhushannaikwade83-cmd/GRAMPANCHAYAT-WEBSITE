@@ -20,15 +20,20 @@ const RajyaGeetSection = () => {
       <Grid container spacing={4} justifyContent="center" alignItems="center">
         {/* Left side - YouTube video */}
         <Grid item xs={12} md={6}>
-          <div style={{ display: "flex", justifyContent: "center" }}>
+          <div style={{ position: "relative", paddingTop: "56.25%" /* 16:9 ratio */ }}>
             <iframe
-              width="100%"
-              height={isMobile ? "200" : "315"} // optional, can be dynamic
               src="https://www.youtube.com/embed/zs-AYr99354"
               title="Rajya Geet"
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%"
+              }}
             ></iframe>
           </div>
         </Grid>
@@ -47,7 +52,7 @@ const RajyaGeetSection = () => {
                 }}
               >
                 <Avatar
-                  src="/tukdoji.jpeg" // from public folder
+                  src="/tukdoji.jpeg"
                   alt="Rashtrasant Tukdoji Maharaj"
                   sx={{ width: 60, height: 60, marginRight: { xs: 0, sm: 2 }, mb: { xs: 1, sm: 0 } }}
                 />
