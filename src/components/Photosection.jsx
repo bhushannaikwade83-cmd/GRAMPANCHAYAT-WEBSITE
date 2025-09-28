@@ -1,20 +1,31 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 const Photosection = () => {
   const images = ["/farmer1.jpg", "/farmer2.jpg"];
   const [currentIndex, setCurrentIndex] = useState(0);
-  const timeoutRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  // Update mobile state on window resize
   useEffect(() => {
-    timeoutRef.current = setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 3000);
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-    return () => clearTimeout(timeoutRef.current);
-  }, [currentIndex, images.length]); // added images.length
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % images.length);
+  const prevSlide = () =>
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  const goToSlide = (index) => setCurrentIndex(index);
 
   return (
-    <div style={{ width: "100%", height: 400, position: "relative" }}>
+    <div
+      style={{
+        width: "100%",
+        height: isMobile ? 250 : 400, // responsive height
+        position: "relative",
+        marginTop: "0px", // below navbar
+      }}
+    >
       {images.map((src, i) => (
         <img
           key={i}
@@ -26,10 +37,88 @@ const Photosection = () => {
             height: "100%",
             objectFit: "cover",
             opacity: i === currentIndex ? 1 : 0,
-            transition: "opacity 1s ease-in-out",
+            transition: "opacity 0.5s ease-in-out",
           }}
         />
       ))}
+
+      {/* Navigation Arrows */}
+      <button
+        onClick={prevSlide}
+        style={{
+          position: "absolute",
+          left: isMobile ? "10px" : "20px",
+          top: "50%",
+          transform: "translateY(-50%)",
+          background: "rgba(0,0,0,0.6)",
+          color: "white",
+          border: "none",
+          borderRadius: "50%",
+          width: isMobile ? "35px" : "45px",
+          height: isMobile ? "35px" : "45px",
+          fontSize: isMobile ? "16px" : "20px",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 10,
+        }}
+      >
+        ❮
+      </button>
+
+      <button
+        onClick={nextSlide}
+        style={{
+          position: "absolute",
+          right: isMobile ? "10px" : "20px",
+          top: "50%",
+          transform: "translateY(-50%)",
+          background: "rgba(0,0,0,0.6)",
+          color: "white",
+          border: "none",
+          borderRadius: "50%",
+          width: isMobile ? "35px" : "45px",
+          height: isMobile ? "35px" : "45px",
+          fontSize: isMobile ? "16px" : "20px",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 10,
+        }}
+      >
+        ❯
+      </button>
+
+      {/* Dots Indicator */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: isMobile ? "15px" : "20px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          gap: isMobile ? "8px" : "12px",
+          zIndex: 10,
+        }}
+      >
+        {images.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            style={{
+              width: isMobile ? "10px" : "12px",
+              height: isMobile ? "10px" : "12px",
+              borderRadius: "50%",
+              border: "2px solid white",
+              background: index === currentIndex ? "white" : "transparent",
+              cursor: "pointer",
+              transition: "all 0.3s",
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 };
