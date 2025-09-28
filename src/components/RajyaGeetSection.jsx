@@ -3,17 +3,18 @@ import { Grid, Card, CardContent, Typography, Avatar } from "@mui/material";
 
 const RajyaGeetSection = () => {
   return (
-    <div style={{ padding: "40px" }}>
+    <div style={{ padding: "40px 20px" }}>
+      {/* Heading */}
       <Typography
-       variant="h5"
-       gutterBottom
-       sx={{ 
-       fontWeight: "bold", 
-       textAlign: "left",   
-      ml: "300px"         
-      }}
+        variant="h5"
+        gutterBottom
+        sx={{
+          fontWeight: "bold",
+          textAlign: { xs: "center", md: "left" }, // center on mobile, left on desktop
+          mb: 4
+        }}
       >
-      राज्य गीत
+        राज्य गीत
       </Typography>
 
       <Grid container spacing={4} justifyContent="center" alignItems="center">
@@ -22,7 +23,7 @@ const RajyaGeetSection = () => {
           <div style={{ display: "flex", justifyContent: "center" }}>
             <iframe
               width="100%"
-              height="315"
+              height={isMobile ? "200" : "315"} // optional, can be dynamic
               src="https://www.youtube.com/embed/zs-AYr99354"
               title="Rajya Geet"
               frameBorder="0"
@@ -41,19 +42,27 @@ const RajyaGeetSection = () => {
                   display: "flex",
                   alignItems: "center",
                   marginBottom: "15px",
+                  flexDirection: { xs: "column", sm: "row" }, // avatar above text on mobile
+                  textAlign: { xs: "center", md: "left" },
                 }}
               >
                 <Avatar
-                  src="/tukdoji.jpeg" //from public folder
+                  src="/tukdoji.jpeg" // from public folder
                   alt="Rashtrasant Tukdoji Maharaj"
-                  sx={{ width: 60, height: 60, marginRight: 2 }}
+                  sx={{ width: 60, height: 60, marginRight: { xs: 0, sm: 2 }, mb: { xs: 1, sm: 0 } }}
                 />
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: "bold" }}
+                >
                   राष्ट्रसंत तुकडोजी महाराज
                 </Typography>
               </div>
 
-              <Typography variant="body1" sx={{ fontStyle: "italic" }}>
+              <Typography
+                variant="body1"
+                sx={{ fontStyle: "italic", textAlign: { xs: "center", md: "left" } }}
+              >
                 “ऐसें गाव होतां आदर्शपूर्ण <br />
                 शहाराइनीहि नंदनवन <br />
                 सर्वां करील आकर्षण <br />
