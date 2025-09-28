@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-// Mock Link component for demo
+// Mock Link component
 const Link = ({ to, children, ...props }) => (
   <a href={to} {...props} style={{ textDecoration: 'none', ...props.style }}>
     {children}
@@ -10,28 +10,26 @@ const Link = ({ to, children, ...props }) => (
 // Mock useLocation hook
 const useLocation = () => ({ pathname: "/" });
 
-// Normalize paths: with dash, concatenated, or with space
+// Normalize paths
 const isPathMatch = (locationPath, parentName, itemName) => {
   const normalizeDash = str => str.replace(/\s+/g, "-");
   const normalizeConcat = str => str.replace(/\s+/g, "");
   const normalizeSpace = str => str;
-
   const dashed = `/${normalizeDash(parentName)}-${normalizeDash(itemName)}`;
   const concat = `/${normalizeConcat(parentName)}${normalizeConcat(itemName)}`;
   const space = `/${normalizeSpace(parentName)} ${normalizeSpace(itemName)}`;
-
   return locationPath === dashed || locationPath === concat || locationPath === space;
 };
 
-// Generate URL path for link
+// Generate link path
 const getLinkPath = (parentName, itemName) => `/${parentName}-${itemName}`;
 
-// Enhanced Dropdown Button Component
+// Dropdown Button
 const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentName, location }) => {
   const [isHovered, setIsHovered] = useState(false);
-  
+
   return (
-    <div 
+    <div
       style={{ position: 'relative' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -62,17 +60,15 @@ const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentN
           fontSize: "20px",
           transition: "transform 0.3s",
           transform: anchor ? "rotate(180deg)" : "rotate(0deg)",
-        }}>
-          ▼
-        </span>
+        }}>▼</span>
       </button>
-      
+
       {anchor && (
         <div
           style={{
             position: 'absolute',
             top: '100%',
-            left: '0',
+            left: 0,
             background: 'white',
             boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
             borderRadius: '8px',
@@ -117,35 +113,23 @@ const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentN
           ))}
         </div>
       )}
-      
+
       <style>{`
         @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-        
         @keyframes pulse {
           0%, 100% { transform: scale(1); }
           50% { transform: scale(1.05); }
-        }
-        
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
         }
       `}</style>
     </div>
   );
 };
 
-// Mobile Menu Component
-const MobileMenu = ({ isOpen, onClose, navLinks, language, location }) => {
+// Mobile Menu
+const MobileMenu = ({ isOpen, onClose, navLinks, location }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
 
   if (!isOpen) return null;
@@ -175,13 +159,7 @@ const MobileMenu = ({ isOpen, onClose, navLinks, language, location }) => {
         <h3 style={{ margin: 0, color: 'black' }}>मेनू</h3>
         <button
           onClick={onClose}
-          style={{
-            background: 'none',
-            border: 'none',
-            fontSize: '24px',
-            cursor: 'pointer',
-            color: 'black'
-          }}
+          style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: 'black' }}
         >
           ✕
         </button>
@@ -213,9 +191,7 @@ const MobileMenu = ({ isOpen, onClose, navLinks, language, location }) => {
                   <span style={{
                     transition: 'transform 0.3s',
                     transform: openDropdown === link.name ? 'rotate(180deg)' : 'rotate(0)'
-                  }}>
-                    ▼
-                  </span>
+                  }}>▼</span>
                 </button>
                 {openDropdown === link.name && (
                   <div style={{ background: '#f0f0f0' }}>
@@ -259,7 +235,7 @@ const MobileMenu = ({ isOpen, onClose, navLinks, language, location }) => {
   );
 };
 
-// Main Navbar Component
+// Navbar Component
 const Navbar = () => {
   const [language, setLanguage] = useState("mr");
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -276,56 +252,28 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "मुख्य पृष्ठ", to: "/" },
-    {
-      name: "ग्रामपंचायत",
-      dropdown: ["माहिती", "नकाशा", "सदस्य", "ग्रामसभेचे निर्णय", "पुरस्कार", "सण/उत्सव", "सुविधा", "ई सेवा", "पर्यटन सथळे"],
-    },
-    {
-      name: "निर्देशिका",
-      dropdown: ["जनगणना", "दूरध्वनी क्रमांक", "हेल्पलाइन", "रुग्णालय"],
-    },
-    {
-      name: "उपक्रम",
-      dropdown: ["स्वच्छ गाव", "विकेल-ते-पिकेल", "माझे-कुटुंब माझी-जबाबदारी", "तंटामुक्त गाव", "जलयुक्त शिवार", "तुषारगावड", "रोती पूरक व्यवसाय", "गादोली", "मतदार नोंदणी", "सर्व शिक्षा अभियान", "क्रीडा स्पर्धा", "आरोग्य शिबिर", "कचऱ्याचे नियोजन", "बायोगॅस निर्मिती", "सेंद्रिय खत निर्मिती"],
-    },
+    { name: "ग्रामपंचायत", dropdown: ["माहिती", "नकाशा", "सदस्य", "ग्रामसभेचे निर्णय", "पुरस्कार", "सण/उत्सव", "सुविधा", "ई सेवा", "पर्यटन सथळे"] },
+    { name: "निर्देशिका", dropdown: ["जनगणना", "दूरध्वनी क्रमांक", "हेल्पलाइन", "रुग्णालय"] },
+    { name: "उपक्रम", dropdown: ["स्वच्छ गाव", "विकेल-ते-पिकेल", "माझे-कुटुंब माझी-जबाबदारी", "तंटामुक्त गाव", "जलयुक्त शिवार", "तुषारगावड", "रोती पूरक व्यवसाय", "गादोली", "मतदार नोंदणी", "सर्व शिक्षा अभियान", "क्रीडा स्पर्धा", "आरोग्य शिबिर", "कचऱ्याचे नियोजन", "बायोगॅस निर्मिती", "सेंद्रिय खत निर्मिती"] },
     { name: "योजना", dropdown: ["राज्य सरकार योजना", "केंद्र सरकार योजना"] },
     { name: "प्रगत शेतकरी", to: "/pragat-shetkari" },
     { name: "ई-शिक्षण", to: "/e-shikshan" },
     { name: "बातम्या", to: "/batmya" },
-    { name: "संपर्क", to: "/contact" },
+    { name: "संपर्क", to: "/contact" }
   ];
 
-  // Check mobile on mount and resize
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Scroll effect
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Close mobile menu on outside click
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (mobileOpen && !event.target.closest('.mobile-menu')) {
-        setMobileOpen(false);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [mobileOpen]);
 
   const handleCloseAllDropdowns = () => {
     setGrampanchayatAnchor(null);
@@ -336,49 +284,22 @@ const Navbar = () => {
 
   const toggleLanguage = () => setLanguage(prev => (prev === "mr" ? "en" : "mr"));
 
-  const handleOpen = setter => event => {
-    handleCloseAllDropdowns();
-    setter(event.currentTarget);
-  };
-
+  const handleOpen = setter => event => { handleCloseAllDropdowns(); setter(event.currentTarget); };
   const handleClose = setter => () => setter(null);
 
   const handleSearchToggle = () => {
     setSearchOpen(!searchOpen);
-    setTimeout(() => {
-      if (searchInputRef.current && !searchOpen) {
-        searchInputRef.current.focus();
-      }
-    }, 100);
+    setTimeout(() => { if (searchInputRef.current && !searchOpen) searchInputRef.current.focus(); }, 100);
   };
 
   const handleSearchSubmit = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      console.log('Search query:', searchQuery);
-      alert(`Searching for: ${searchQuery}`);
-    }
+    if (e.key === 'Enter') { e.preventDefault(); alert(`Searching for: ${searchQuery}`); }
   };
 
   return (
     <div>
-      {/* Overlay for mobile menu */}
-      {mobileOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            background: 'rgba(0,0,0,0.5)',
-            zIndex: 1500
-          }}
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
+      {mobileOpen && <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', zIndex: 1500 }} onClick={() => setMobileOpen(false)} />}
 
-      {/* Navbar */}
       <nav style={{
         background: isScrolled ? 'rgba(248, 249, 250, 0.95)' : '#f8f9fa',
         borderBottom: '2px solid #ccc',
@@ -392,225 +313,68 @@ const Navbar = () => {
         {/* Top Bar */}
         <div style={{
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
           padding: '12px 20px',
-          flexWrap: 'wrap'
+          flexWrap: isMobile ? 'nowrap' : 'wrap'
         }}>
           {/* Logo */}
-          <Link to="/" style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            textDecoration: 'none'
-          }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}>
             <div style={{
-              width: '50px',
-              height: '50px',
-              background: 'linear-gradient(45deg, #3498db, #2196f3)',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              fontWeight: 'bold',
-              fontSize: '18px',
-              transition: 'transform 0.3s ease',
-              animation: 'pulse 2s infinite'
-            }}>
-              🏛️
-            </div>
+              width: '50px', height: '50px', background: 'linear-gradient(45deg, #3498db, #2196f3)',
+              borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'white', fontWeight: 'bold', fontSize: '18px', animation: 'pulse 2s infinite'
+            }}>🏛️</div>
             <div>
-              <h1 style={{
-                fontSize: '20px',
-                fontWeight: 'bold',
-                color: 'black',
-                margin: 0
-              }}>
-                ग्रामपंचायत नाव
-              </h1>
-              <p style={{
-                fontSize: '12px',
-                color: '#666',
-                margin: 0,
-                fontWeight: '500'
-              }}>
-                Grampanchayat Name
-              </p>
+              <h1 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', margin: 0 }}>ग्रामपंचायत नाव</h1>
+              <p style={{ fontSize: '12px', color: '#666', margin: 0, fontWeight: '500' }}>Grampanchayat Name</p>
             </div>
           </Link>
 
           {/* Controls */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '15px'
-          }}>
-            {/* Search - Desktop Only */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: 'auto' }}>
             {!isMobile && (
               <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                background: searchOpen ? '#e0e0e0' : 'transparent',
-                borderRadius: '25px',
-                padding: searchOpen ? '6px 12px' : '6px',
-                transition: 'all 0.3s ease',
-                width: searchOpen ? '200px' : '40px',
-                cursor: 'pointer',
-                border: searchOpen ? '2px solid #2196f3' : '2px solid transparent'
+                position: 'relative', display: 'flex', alignItems: 'center',
+                background: searchOpen ? '#e0e0e0' : 'transparent', borderRadius: '25px',
+                padding: searchOpen ? '6px 12px' : '6px', transition: 'all 0.3s ease',
+                width: searchOpen ? '200px' : '40px', cursor: 'pointer', border: searchOpen ? '2px solid #2196f3' : '2px solid transparent'
               }}>
-                <span 
-                  onClick={handleSearchToggle}
-                  style={{
-                    fontSize: '20px',
-                    color: 'black',
-                    transition: 'transform 0.3s ease'
-                  }}
-                >
-                  🔍
-                </span>
-                {searchOpen && (
-                  <input
-                    ref={searchInputRef}
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearchSubmit(e)}
-                    placeholder={language === "mr" ? "शोधा..." : "Search..."}
-                    style={{
-                      marginLeft: '8px',
-                      flex: 1,
-                      fontSize: '14px',
-                      color: 'black',
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      width: '100%'
-                    }}
-                  />
-                )}
+                <span onClick={handleSearchToggle} style={{ fontSize: '20px', color: 'black', transition: 'transform 0.3s ease' }}>🔍</span>
+                {searchOpen && <input ref={searchInputRef} type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} onKeyPress={handleSearchSubmit} placeholder={language === "mr" ? "शोधा..." : "Search..."} style={{ marginLeft: '8px', flex: 1, fontSize: '14px', color: 'black', background: 'transparent', border: 'none', outline: 'none', width: '100%' }} />}
               </div>
             )}
 
-            {/* Language Toggle */}
-            <button
-              onClick={toggleLanguage}
-              style={{
-                fontWeight: 'bold',
-                color: 'white',
-                background: 'linear-gradient(45deg, #2196f3, #21cbf3)',
-                border: '2px solid transparent',
-                fontSize: isMobile ? '12px' : '14px',
-                padding: isMobile ? '6px 12px' : '8px 16px',
-                borderRadius: '25px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                boxShadow: '0 4px 15px rgba(33, 150, 243, 0.3)',
-                transform: 'scale(1)'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'scale(1.05) translateY(-2px)';
-                e.target.style.boxShadow = '0 6px 20px rgba(33, 150, 243, 0.4)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'scale(1) translateY(0)';
-                e.target.style.boxShadow = '0 4px 15px rgba(33, 150, 243, 0.3)';
-              }}
-            >
+            <button onClick={toggleLanguage} style={{ fontWeight: 'bold', color: 'white', background: 'linear-gradient(45deg, #2196f3, #21cbf3)', border: '2px solid transparent', fontSize: isMobile ? '12px' : '14px', padding: isMobile ? '6px 12px' : '8px 16px', borderRadius: '25px', cursor: 'pointer', transition: 'all 0.3s ease', boxShadow: '0 4px 15px rgba(33, 150, 243, 0.3)' }}>
               {language === "mr" ? "मराठी → English" : "English → मराठी"}
             </button>
 
-            {/* Mobile Menu Button */}
-            {isMobile && (
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="mobile-menu"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  fontSize: '24px',
-                  cursor: 'pointer',
-                  color: 'black',
-                  transition: 'transform 0.3s ease'
-                }}
-                onMouseEnter={(e) => e.target.style.transform = 'scale(1.1)'}
-                onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-              >
-                ☰
-              </button>
-            )}
+            {isMobile && <button onClick={() => setMobileOpen(!mobileOpen)} className="mobile-menu" style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: 'black' }}>☰</button>}
           </div>
         </div>
 
         {/* Desktop Navigation */}
         {!isMobile && (
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '20px',
-            padding: '10px 20px',
-            flexWrap: 'wrap',
-            background: 'rgba(255, 255, 255, 0.7)',
-            borderTop: '1px solid #e0e0e0'
-          }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', padding: '10px 20px', flexWrap: 'wrap', background: 'rgba(255, 255, 255, 0.7)', borderTop: '1px solid #e0e0e0' }}>
             {navLinks.map((link, i) =>
               link.dropdown ? (
                 <DropdownButton
                   key={i}
                   title={link.name}
-                  anchor={
-                    link.name === "ग्रामपंचायत" ? grampanchayatAnchor :
-                    link.name === "निर्देशिका" ? directoryAnchor :
-                    link.name === "उपक्रम" ? upkramAnchor : yojnaAnchor
-                  }
-                  handleOpen={
-                    link.name === "ग्रामपंचायत" ? handleOpen(setGrampanchayatAnchor) :
-                    link.name === "निर्देशिका" ? handleOpen(setDirectoryAnchor) :
-                    link.name === "उपक्रम" ? handleOpen(setUpkramAnchor) : handleOpen(setYojnaAnchor)
-                  }
-                  handleClose={
-                    link.name === "ग्रामपंचायत" ? handleClose(setGrampanchayatAnchor) :
-                    link.name === "निर्देशिका" ? handleClose(setDirectoryAnchor) :
-                    link.name === "उपक्रम" ? handleClose(setUpkramAnchor) : handleClose(setYojnaAnchor)
-                  }
+                  anchor={link.name === "ग्रामपंचायत" ? grampanchayatAnchor : link.name === "निर्देशिका" ? directoryAnchor : link.name === "उपक्रम" ? upkramAnchor : yojnaAnchor}
+                  handleOpen={link.name === "ग्रामपंचायत" ? handleOpen(setGrampanchayatAnchor) : link.name === "निर्देशिका" ? handleOpen(setDirectoryAnchor) : link.name === "उपक्रम" ? handleOpen(setUpkramAnchor) : handleOpen(setYojnaAnchor)}
+                  handleClose={link.name === "ग्रामपंचायत" ? handleClose(setGrampanchayatAnchor) : link.name === "निर्देशिका" ? handleClose(setDirectoryAnchor) : link.name === "उपक्रम" ? handleClose(setUpkramAnchor) : handleClose(setYojnaAnchor)}
                   items={link.dropdown}
                   parentName={link.name}
                   location={location}
                 />
               ) : (
-                <Link
-                  key={i}
-                  to={link.to}
-                  style={{
-                    textDecoration: 'none',
-                    fontWeight: 'bold',
-                    fontSize: '16px',
-                    padding: '8px 16px',
-                    borderRadius: '25px',
-                    transition: 'all 0.3s ease',
-                    cursor: 'pointer',
-                    color: location.pathname === link.to ? 'white' : 'black',
-                    background: location.pathname === link.to ? 'linear-gradient(45deg, #2196f3, #21cbf3)' : 'transparent',
-                    boxShadow: location.pathname === link.to ? '0 4px 15px rgba(33, 150, 243, 0.3)' : 'none'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (location.pathname !== link.to) {
-                      e.target.style.color = '#2196f3';
-                      e.target.style.transform = 'translateY(-2px)';
-                      e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (location.pathname !== link.to) {
-                      e.target.style.color = 'black';
-                      e.target.style.transform = 'translateY(0)';
-                      e.target.style.boxShadow = 'none';
-                    }
-                  }}
-                >
-                  {link.name}
-                </Link>
+                <Link key={i} to={link.to} style={{
+                  textDecoration: 'none', fontWeight: 'bold', fontSize: '16px', padding: '8px 16px', borderRadius: '25px',
+                  transition: 'all 0.3s ease', cursor: 'pointer',
+                  color: location.pathname === link.to ? 'white' : 'black',
+                  background: location.pathname === link.to ? 'linear-gradient(45deg, #2196f3, #21cbf3)' : 'transparent',
+                  boxShadow: location.pathname === link.to ? '0 4px 15px rgba(33, 150, 243, 0.3)' : 'none'
+                }}>{link.name}</Link>
               )
             )}
           </div>
@@ -618,15 +382,7 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile Menu */}
-      <MobileMenu 
-        isOpen={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-        navLinks={navLinks}
-        language={language}
-        location={location}
-      />
-
-
+      <MobileMenu isOpen={mobileOpen} onClose={() => setMobileOpen(false)} navLinks={navLinks} location={location} />
     </div>
   );
 };
