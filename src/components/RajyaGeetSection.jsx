@@ -10,7 +10,7 @@ const RajyaGeetSection = () => {
         gutterBottom
         sx={{
           fontWeight: "bold",
-          textAlign: { xs: "center", md: "left" }, // center on mobile, left on desktop
+          textAlign: { xs: "center", md: "center" }, // center on mobile, left on desktop
           mb: 4
         }}
       >
