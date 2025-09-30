@@ -70,7 +70,7 @@ const GovLogosSection = () => {
     <Box
       sx={{
         position: "relative",
-        width: "100%", // Changed from 100vw to 100%
+        width: "100%",
         minHeight: 200,
         background: "linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%)",
         overflow: "hidden",
@@ -121,23 +121,32 @@ const GovLogosSection = () => {
       ))}
 
       {/* Left Text */}
-      <Box sx={{ flexShrink: 0, zIndex: 2 }}>
+      <Box
+        sx={{
+          flexShrink: 0,
+          zIndex: 2,
+          display: 'flex',
+          justifyContent: { xs: 'center', sm: 'flex-start' }, // Center on mobile, left on desktop
+          alignItems: { xs: 'center', sm: 'center' },
+          width: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          height: '100%',
+          padding: { xs: 2, sm: 4 }
+        }}
+      >
         <Typography
           variant="h2"
           sx={{
             color: "white",
             fontWeight: "bold",
             fontSize: { xs: "2rem", sm: "3rem", lg: "4rem" },
+            lineHeight: 1.2,
             textShadow: "0 4px 8px rgba(0,0,0,0.3)",
-            background: "linear-gradient(45deg, #fef3c7, #ffffff)",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            animation: "glow 2s ease-in-out infinite alternate",
-            "@keyframes glow": {
-              from: { filter: "drop-shadow(0 0 5px rgba(255,255,255,0.5))" },
-              to: { filter: "drop-shadow(0 0 20px rgba(255,255,255,0.8))" }
-            }
+            fontFamily: "'Arial Rounded MT Bold', Arial, sans-serif",
+            textAlign: "center",
+            maxWidth: '80%'
           }}
         >
           शासकीय
@@ -153,7 +162,8 @@ const GovLogosSection = () => {
           justifyContent: "center",
           minWidth: 0,
           zIndex: 2,
-          px: 2
+          px: 2,
+          position: "relative"
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 2, lg: 4 } }}>
@@ -183,23 +193,6 @@ const GovLogosSection = () => {
 
           {/* Logo Container */}
           <Box sx={{ position: "relative" }}>
-            {/* Glow effect */}
-            <Box
-              sx={{
-                position: "absolute",
-                inset: -2,
-                background: "linear-gradient(45deg, #fbbf24, #f97316, #dc2626)",
-                borderRadius: 3,
-                filter: "blur(8px)",
-                opacity: 0.4,
-                animation: "pulse 2s ease-in-out infinite",
-                "@keyframes pulse": {
-                  "0%, 100%": { opacity: 0.4 },
-                  "50%": { opacity: 0.6 }
-                }
-              }}
-            />
-            
             <Paper
               elevation={0}
               onClick={() => handleLogoClick(logos[currentIndex].link)}
@@ -366,23 +359,32 @@ const GovLogosSection = () => {
       </Box>
 
       {/* Right Text */}
-      <Box sx={{ flexShrink: 0, zIndex: 2 }}>
+      <Box
+        sx={{
+          flexShrink: 0,
+          zIndex: 2,
+          display: 'flex',
+          justifyContent: { xs: 'center', sm: 'flex-end' }, // Center on mobile, right on desktop
+          alignItems: { xs: 'center', sm: 'center' },
+          width: '100%',
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          height: '100%',
+          padding: { xs: 2, sm: 4 }
+        }}
+      >
         <Typography
           variant="h2"
           sx={{
             color: "white",
             fontWeight: "bold",
             fontSize: { xs: "2rem", sm: "3rem", lg: "4rem" },
+            lineHeight: 1.2,
             textShadow: "0 4px 8px rgba(0,0,0,0.3)",
-            background: "linear-gradient(45deg, #fef3c7, #ffffff)",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            animation: "glow 2s ease-in-out infinite alternate",
-            "@keyframes glow": {
-              from: { filter: "drop-shadow(0 0 5px rgba(255,255,255,0.5))" },
-              to: { filter: "drop-shadow(0 0 20px rgba(255,255,255,0.8))" }
-            }
+            fontFamily: "'Arial Rounded MT Bold', Arial, sans-serif",
+            textAlign: "center",
+            maxWidth: '80%'
           }}
         >
           संकेतस्थळे
