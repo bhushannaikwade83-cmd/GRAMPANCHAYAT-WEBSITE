@@ -5,6 +5,7 @@ import { useTheme } from "@mui/material/styles";
 
 // Import components
 import Navbar from "./components/Navbar";
+import Welcome from "./components/Welcome";
 import Photosection from "./components/Photosection";
 import RajyaGeetSection from "./components/RajyaGeetSection";
 import MessagesSection from "./components/MessagesSection";
@@ -14,7 +15,7 @@ import DigitalSlogans from "./components/DigitalSlogans";
 import GovLogosSection from "./components/GovLogosSection";
 import Footer from "./components/Footer";
 
-// Import new pages
+// Import pages
 import GrampanchayatMahiti from "./pages/GrampanchayatMahiti";
 import GrampanchayatNaksha from "./pages/GrampanchayatNaksha";
 import GrampanchayatSadasya from "./pages/GrampanchayatSadasya";
@@ -47,104 +48,94 @@ import GramSendriyaKhat from "./pages/GramSendriyaKhat";
 import GramRajyaSarkarYojna from "./pages/GramRajyaSarkarYojna";
 import GramKendraSarkarYojana from "./pages/GramKendraSarkarYojana";
 
-
-
 function App() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navbarHeight = 64; // Navbar height in px
+
+  // Utility wrapper for non-home pages
+  const withNavbarPadding = (Component) => (
+    <Box sx={{ pt: `${navbarHeight}px` }}>
+      <Component />
+    </Box>
+  );
 
   return (
     <>
       {/* Navbar */}
       <Navbar />
 
-      {/* Page Content with paddingTop to clear fixed Navbar */}
-      <Box sx={{ pt: `${navbarHeight}px` }}>
+      <Box>
         <Routes>
           {/* Home Page */}
           <Route
             path="/"
             element={
               <>
-                {/* Full-width sections */}
-                <Photosection />
-                <RajyaGeetSection />
+                {/* Welcome Section below Navbar */}
+                <Welcome />
 
-                {/* Grid layout for Messages + Members */}
-                <Box sx={{ width: "100%", p: 0, m: 0 }}>
-                  <Grid
-                    container
-                    spacing={isMobile ? 2 : 4}
-                    sx={{ width: "100%", m: 0, p: 0 }}
-                  >
+                {/* Photo/Hero Section after Welcome */}
+                <Photosection />
+
+                {/* Rest of homepage content */}
+                <Box sx={{ pt: `${navbarHeight}px` }}>
+                  <RajyaGeetSection />
+
+                  {/* Grid layout for Messages + Members */}
+                  <Grid container spacing={isMobile ? 2 : 4} sx={{ width: "100%", m: 0, p: 0 }}>
                     <Grid item xs={12} md={6} lg={5}>
                       <MessagesSection />
                     </Grid>
-
                     <Grid item xs={12} md={6} lg={7}>
                       <MembersSection />
                     </Grid>
                   </Grid>
-                </Box>
 
-                {/* Full-width sections (outside Grid) */}
-                <GrampanchayatInfo />
-                <DigitalSlogans />
-
-                {/* Enhanced Government Logos Section */}
-                <Box
-                  sx={{
-                    width: "100%",
-                    overflow: "hidden", // Prevent horizontal scroll
-                    m: 0,
-                    p: 0,
-                  }}
-                >
+                  <GrampanchayatInfo />
+                  <DigitalSlogans />
                   <GovLogosSection />
                 </Box>
               </>
             }
           />
 
-          {/* ग्रामपंचायत → माहिती */}
-          <Route path="/ग्रामपंचायत-माहिती" element={<GrampanchayatMahiti />} />
-          <Route path="/ग्रामपंचायत-नकाशा" element={<GrampanchayatNaksha />} />
-          <Route path="/ग्रामपंचायत-सदस्य" element={<GrampanchayatSadasya />} />
-          <Route path="/ग्रामपंचायत-ग्रामसभेचे-निर्णय" element={<GramsabhaNirnay />} />
-          <Route path="/ग्रामपंचायत-पुरस्कार" element={<GramPuraskar />} />
-          <Route path="/ग्रामपंचायत-सण-उत्सव" element={<Festival />} />
-          <Route path="/ग्रामपंचायत-सुविधा" element={<GramSuvidha />} />
-          <Route path="/ग्रामपंचायत-पर्यटन-स्थळे" element={<Gramparyatansthale />} />
-          <Route path="/निर्देशिका-जनगणना" element={<Gramjanganna />} />
-          <Route path="/निर्देशिका-दूरध्वनी-क्रमांक" element={<GramDhurdhvani />} />
-          <Route path="/निर्देशिका-हेल्पलाईन" element={<GramHelpline />} />
-          <Route path="/निर्देशिका-रुग्णालय" element={<GramRugnalay />} />
+          {/* Other routes */}
+          <Route path="/ग्रामपंचायत-माहिती" element={withNavbarPadding(GrampanchayatMahiti)} />
+          <Route path="/ग्रामपंचायत-नकाशा" element={withNavbarPadding(GrampanchayatNaksha)} />
+          <Route path="/ग्रामपंचायत-सदस्य" element={withNavbarPadding(GrampanchayatSadasya)} />
+          <Route path="/ग्रामपंचायत-ग्रामसभेचे निर्णय" element={withNavbarPadding(GramsabhaNirnay)} />
+          <Route path="/ग्रामपंचायत-पुरस्कार" element={withNavbarPadding(GramPuraskar)} />
+          <Route path="/ग्रामपंचायत-सण/उत्सव" element={withNavbarPadding(Festival)} />
+          <Route path="/ग्रामपंचायत-सुविधा" element={withNavbarPadding(GramSuvidha)} />
+          <Route path="/ग्रामपंचायत-पर्यटन स्थळे" element={withNavbarPadding(Gramparyatansthale)} />
+          <Route path="/निर्देशिका-जनगणना" element={withNavbarPadding(Gramjanganna)} />
+          <Route path="/निर्देशिका-दूरध्वनी क्रमांक" element={withNavbarPadding(GramDhurdhvani)} />
+          <Route path="/निर्देशिका-हेल्पलाईन" element={withNavbarPadding(GramHelpline)} />
+          <Route path="/निर्देशिका-रुग्णालय" element={withNavbarPadding(GramRugnalay)} />
 
-          {/* उपक्रम → All initiatives */}
-          <Route path="/उपक्रम-स्वच्छ गाव" element={<SwachhGav />} />
-          <Route path="/उपक्रम-विकेल-ते-पिकेल" element={<Vikeltepikel />} />
-          <Route path="/उपक्रम-माझं-कुटुंब माझी-जवाबदारी" element={<Grammajhikutumb />} />
-          <Route path="/उपक्रम-तंटामुक्त गाव" element={<GramTantamuktGav />} />
-          <Route path="/उपक्रम-जलयुक्त शिवार" element={<GramJalyuktShivar />} />
-          <Route path="/उपक्रम-तुषारगाव" element={<GramTushargav />} />
-          <Route path="/उपक्रम-रोती पूरक व्यवसाय" element={<GramRotiPurakVyavsay />} />
-          <Route path="/उपक्रम-गादोली" element={<GramGavadoli />} />
-          <Route path="/उपक्रम-मतदार नोंदणी" element={<GramMatdarNondani />} />
-          <Route path="/उपक्रम-सर्व शिक्षा अभियान" element={<GramSarvaShikshaAbhiyan />} />
-          <Route path="/उपक्रम-क्रीडा स्पर्धा" element={<GramKridaSpardha />} />
-          <Route path="/उपक्रम-आरोग्य शिबिर" element={<GramArogyaShibir />} />
-          <Route path="/उपक्रम-कचऱ्याचे नियोजन" element={<GramKachraNivaran />} />
-          <Route path="/उपक्रम-बायोगॅस निर्मिती" element={<GramBiogasNirmiti />} />
-          <Route path="/उपक्रम-सेंद्रिय खत निर्मिती" element={<GramSendriyaKhat />} />
-          <Route path="/योजना-राज्य सरकार योजना" element={<GramRajyaSarkarYojna />} />
-          <Route path="/योजना-केंद्र सरकार योजना" element={<GramKendraSarkarYojana />} />
-
-  
+          {/* उपक्रम */}
+          <Route path="/उपक्रम-स्वच्छ गाव" element={withNavbarPadding(SwachhGav)} />
+          <Route path="/उपक्रम-विकेल-ते-पिकेल" element={withNavbarPadding(Vikeltepikel)} />
+          <Route path="/उपक्रम-माझं-कुटुंब माझी-जवाबदारी" element={withNavbarPadding(Grammajhikutumb)} />
+          <Route path="/उपक्रम-तंटामुक्त गाव" element={withNavbarPadding(GramTantamuktGav)} />
+          <Route path="/उपक्रम-जलयुक्त शिवार" element={withNavbarPadding(GramJalyuktShivar)} />
+          <Route path="/उपक्रम-तुषारगाव" element={withNavbarPadding(GramTushargav)} />
+          <Route path="/उपक्रम-रोती पूरक व्यवसाय" element={withNavbarPadding(GramRotiPurakVyavsay)} />
+          <Route path="/उपक्रम-गादोली" element={withNavbarPadding(GramGavadoli)} />
+          <Route path="/उपक्रम-मतदार नोंदणी" element={withNavbarPadding(GramMatdarNondani)} />
+          <Route path="/उपक्रम-सर्व शिक्षा अभियान" element={withNavbarPadding(GramSarvaShikshaAbhiyan)} />
+          <Route path="/उपक्रम-क्रीडा स्पर्धा" element={withNavbarPadding(GramKridaSpardha)} />
+          <Route path="/उपक्रम-आरोग्य शिबिर" element={withNavbarPadding(GramArogyaShibir)} />
+          <Route path="/उपक्रम-कचऱ्याचे नियोजन" element={withNavbarPadding(GramKachraNivaran)} />
+          <Route path="/उपक्रम-बायोगॅस निर्मिती" element={withNavbarPadding(GramBiogasNirmiti)} />
+          <Route path="/उपक्रम-सेंद्रिय खत निर्मिती" element={withNavbarPadding(GramSendriyaKhat)} />
+          <Route path="/योजना-राज्य सरकार योजना" element={withNavbarPadding(GramRajyaSarkarYojna)} />
+          <Route path="/योजना-केंद्र सरकार योजना" element={withNavbarPadding(GramKendraSarkarYojana)} />
         </Routes>
       </Box>
 
-      {/* Footer placed outside Routes */}
+      {/* Footer */}
       <Footer />
     </>
   );
