@@ -86,14 +86,16 @@ function App() {
                   <Grid container spacing={isMobile ? 2 : 4} sx={{ width: "100%", m: 0, p: 0, justifyContent: "center" }}>
                     <Grid item xs={12} md={6} lg={5} sx={{ 
                       display: "flex",
-                      justifyContent: "center"
+                      justifyContent: "center",
+                      px: { xs: 2, sm: 3 } // Adjust padding for mobile centering (increase to shift left)
                     }}>
                       <Box sx={{ width: "100%", maxWidth: { xs: "100%", md: "none" } }}>
                         <MessagesSection />
                       </Box>
                     </Grid>
                     <Grid item xs={12} md={6} lg={7} sx={{ 
-                      pr: { lg: 8 }, // Adjust this number to shift left (increase) or right (decrease)
+                      pr: { lg: 8 }, // Desktop: Adjust this number to shift left (increase) or right (decrease)
+                      px: { xs: 2, sm: 3 }, // Mobile: Adjust padding for mobile centering (increase to shift left)
                       display: "flex",
                       justifyContent: "center"
                     }}>
