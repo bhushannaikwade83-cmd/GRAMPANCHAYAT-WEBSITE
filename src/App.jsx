@@ -83,14 +83,23 @@ function App() {
                   <RajyaGeetSection />
 
                   {/* Grid layout for Messages + Members */}
-                  <Grid container spacing={isMobile ? 2 : 4} sx={{ width: "100%", m: 0, p: 0 }}>
-                    <Grid item xs={12} md={6} lg={5}>
-                      <MessagesSection />
+                  <Grid container spacing={isMobile ? 2 : 4} sx={{ width: "100%", m: 0, p: 0, justifyContent: "center" }}>
+                    <Grid item xs={12} md={6} lg={5} sx={{ 
+                      display: "flex",
+                      justifyContent: "center"
+                    }}>
+                      <Box sx={{ width: "100%", maxWidth: { xs: "100%", md: "none" } }}>
+                        <MessagesSection />
+                      </Box>
                     </Grid>
                     <Grid item xs={12} md={6} lg={7} sx={{ 
-                      pr: { lg: 8 } // Adjust this number to shift left (increase) or right (decrease)
+                      pr: { lg: 8 }, // Adjust this number to shift left (increase) or right (decrease)
+                      display: "flex",
+                      justifyContent: "center"
                     }}>
-                      <MembersSection />
+                      <Box sx={{ width: "100%", maxWidth: { xs: "100%", md: "none" } }}>
+                        <MembersSection />
+                      </Box>
                     </Grid>
                   </Grid>
 
