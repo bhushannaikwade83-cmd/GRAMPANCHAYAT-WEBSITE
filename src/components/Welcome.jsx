@@ -1,20 +1,50 @@
-import React from "react";
-import { useTheme, useMediaQuery } from "@mui/material";
+import React, { useState, useEffect } from "react";
 
 const Welcome = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [hoveredStat, setHoveredStat] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    
+    // Trigger stats animation after mount
+    setTimeout(() => setStatsVisible(true), 300);
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePosition({
+      x: ((e.clientX - rect.left) / rect.width) * 100,
+      y: ((e.clientY - rect.top) / rect.height) * 100
+    });
+  };
+
+  const stats = [
+    { icon: "👥", text: "1200+ नागरिक", detail: "सक्रिय नागरिक" },
+    { icon: "🏠", text: "250+ कुटुंबे", detail: "नोंदणीकृत कुटुंबे" },
+    { icon: "🌾", text: "शेती विकास", detail: "आधुनिक तंत्रज्ञान" },
+    { icon: "💡", text: "डिजिटल सेवा", detail: "24/7 ऑनलाइन" }
+  ];
 
   return (
-    <section style={{
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      color: 'white',
-      padding: isMobile ? '40px 20px' : '60px 40px',
-      textAlign: 'center',
-      position: 'relative',
-      overflow: 'hidden'
-    }}>
-      {/* Decorative elements */}
+    <section 
+      onMouseMove={handleMouseMove}
+      style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        color: 'white',
+        padding: isMobile ? '40px 20px' : '60px 40px',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden',
+        minHeight: '400px'
+      }}
+    >
+      {/* Animated decorative elements */}
       <div style={{
         position: 'absolute',
         top: '-50px',
@@ -23,7 +53,10 @@ const Welcome = () => {
         height: '200px',
         background: 'rgba(255,255,255,0.1)',
         borderRadius: '50%',
-        opacity: 0.5
+        opacity: 0.5,
+        transform: `translate(${mousePosition.x * 0.02}px, ${mousePosition.y * 0.02}px)`,
+        transition: 'transform 0.3s ease-out',
+        animation: 'float 6s ease-in-out infinite'
       }} />
       <div style={{
         position: 'absolute',
@@ -33,7 +66,22 @@ const Welcome = () => {
         height: '150px',
         background: 'rgba(255,255,255,0.1)',
         borderRadius: '50%',
-        opacity: 0.5
+        opacity: 0.5,
+        transform: `translate(${mousePosition.x * -0.015}px, ${mousePosition.y * -0.015}px)`,
+        transition: 'transform 0.3s ease-out',
+        animation: 'float 8s ease-in-out infinite reverse'
+      }} />
+
+      {/* Additional floating circles */}
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        left: '10%',
+        width: '100px',
+        height: '100px',
+        background: 'rgba(255,255,255,0.08)',
+        borderRadius: '50%',
+        animation: 'float 7s ease-in-out infinite'
       }} />
 
       <div style={{ position: 'relative', zIndex: 1 }}>
@@ -41,20 +89,22 @@ const Welcome = () => {
           fontSize: isMobile ? '28px' : '42px',
           margin: '0 0 15px 0',
           fontWeight: 'bold',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+          textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
+          animation: 'fadeInDown 0.8s ease-out'
         }}>
-          {/* Your header text */}
+          ग्रामपंचायत वर
         </h1>
 
         {/* Marathi Welcome Message */}
         <p style={{
-          fontSize: isMobile ? '16px' : '20px',
+          fontSize: isMobile ? '18px' : '24px',
           margin: '0 0 20px 0',
           fontWeight: '600',
           color: '#fff',
-          textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
+          textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
+          animation: 'fadeInDown 0.8s ease-out 0.2s backwards'
         }}>
-          ग्रामपंचायत वरा आपलं स्वागत आहे
+          स्वागत आहे
         </p>
 
         <p style={{
@@ -64,12 +114,13 @@ const Welcome = () => {
           maxWidth: '700px',
           marginLeft: 'auto',
           marginRight: 'auto',
-          lineHeight: '1.6'
+          lineHeight: '1.6',
+          animation: 'fadeInUp 0.8s ease-out 0.4s backwards'
         }}>
-          {/* Your paragraph text */}
+          आमच्या गावाची डिजिटल सेवा आणि माहिती एका ठिकाणी
         </p>
 
-        {/* Quick Stats */}
+        {/* Interactive Quick Stats */}
         <div style={{
           display: 'flex',
           justifyContent: 'center',
@@ -77,29 +128,100 @@ const Welcome = () => {
           marginTop: '30px',
           flexWrap: 'wrap'
         }}>
-          {[
-            { icon: "👥", text: "1200+ नागरिक" },
-            { icon: "🏠", text: "250+ कुटुंबे" },
-            { icon: "🌾", text: "शेती विकास" },
-            { icon: "💡", text: "डिजिटल सेवा" }
-          ].map((item, i) => (
-            <div key={i} style={{
-              background: 'rgba(255,255,255,0.2)',
-              padding: isMobile ? '8px 15px' : '10px 20px',
-              borderRadius: '25px',
-              fontSize: isMobile ? '13px' : '14px',
-              fontWeight: '600',
-              backdropFilter: 'blur(10px)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              <span style={{ fontSize: isMobile ? '16px' : '18px' }}>{item.icon}</span>
-              {item.text}
+          {stats.map((item, i) => (
+            <div 
+              key={i}
+              onMouseEnter={() => setHoveredStat(i)}
+              onMouseLeave={() => setHoveredStat(null)}
+              style={{
+                background: hoveredStat === i 
+                  ? 'rgba(255,255,255,0.3)' 
+                  : 'rgba(255,255,255,0.2)',
+                padding: isMobile ? '12px 18px' : '15px 25px',
+                borderRadius: '25px',
+                fontSize: isMobile ? '13px' : '14px',
+                fontWeight: '600',
+                backdropFilter: 'blur(10px)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '5px',
+                cursor: 'pointer',
+                transform: hoveredStat === i ? 'translateY(-5px) scale(1.05)' : 'translateY(0)',
+                transition: 'all 0.3s ease',
+                opacity: statsVisible ? 1 : 0,
+                animation: `fadeInUp 0.5s ease-out ${0.6 + i * 0.1}s backwards`,
+                boxShadow: hoveredStat === i 
+                  ? '0 8px 20px rgba(0,0,0,0.2)' 
+                  : '0 2px 8px rgba(0,0,0,0.1)',
+                minWidth: isMobile ? '120px' : '140px'
+              }}
+            >
+              <span style={{ 
+                fontSize: isMobile ? '24px' : '28px',
+                transform: hoveredStat === i ? 'scale(1.2) rotate(10deg)' : 'scale(1)',
+                transition: 'transform 0.3s ease',
+                display: 'inline-block'
+              }}>
+                {item.icon}
+              </span>
+              <span>{item.text}</span>
+              <span style={{
+                fontSize: '11px',
+                opacity: hoveredStat === i ? 1 : 0,
+                maxHeight: hoveredStat === i ? '20px' : '0',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                color: '#f0f0f0'
+              }}>
+                {item.detail}
+              </span>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-20px);
+          }
+        }
+
+        @keyframes pulse {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.03);
+          }
+        }
+      `}</style>
     </section>
   );
 };
