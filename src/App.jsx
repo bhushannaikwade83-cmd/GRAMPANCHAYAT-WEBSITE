@@ -95,7 +95,7 @@ function App() {
                     </Grid>
                     <Grid item xs={12} md={6} lg={7} sx={{ 
                       pr: { lg: 8 }, // Desktop: Adjust this number to shift left (increase) or right (decrease)
-                      px: { xs: 4, sm: 5 }, // Mobile: Adjust padding for mobile centering (increase to shift left)
+                      px: { xs: 3, sm: 4 }, // Mobile: Adjust padding for mobile centering (increase to shift left)
                       display: "flex",
                       justifyContent: "center"
                     }}>
