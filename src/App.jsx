@@ -87,7 +87,7 @@ function App() {
                     <Grid item xs={12} md={6} lg={5} sx={{ 
                       display: "flex",
                       justifyContent: "center",
-                      px: { xs: 4, sm: 5 } // Adjust padding for mobile centering (increase to shift left)
+                      px: { xs: 3, sm: 4 } // Adjust padding for mobile centering (increase to shift left)
                     }}>
                       <Box sx={{ width: "100%", maxWidth: { xs: "100%", md: "none" } }}>
                         <MessagesSection />
@@ -95,7 +95,7 @@ function App() {
                     </Grid>
                     <Grid item xs={12} md={6} lg={7} sx={{ 
                       pr: { lg: 8 }, // Desktop: Adjust this number to shift left (increase) or right (decrease)
-                      px: { xs: 3, sm: 4 }, // Mobile: Adjust padding for mobile centering (increase to shift left)
+                      px: { xs: 4, sm: 5 }, // Mobile: Adjust padding for mobile centering (increase to shift left)
                       display: "flex",
                       justifyContent: "center"
                     }}>
