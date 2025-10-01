@@ -87,7 +87,9 @@ function App() {
                     <Grid item xs={12} md={6} lg={5}>
                       <MessagesSection />
                     </Grid>
-                    <Grid item xs={12} md={6} lg={7}>
+                    <Grid item xs={12} md={6} lg={7} sx={{ 
+                      pr: { lg: 8 } // Adjust this number to shift left (increase) or right (decrease)
+                    }}>
                       <MembersSection />
                     </Grid>
                   </Grid>
