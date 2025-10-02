@@ -28,6 +28,7 @@ import Gramjanganna from "./pages/Gramjanganna";
 import GramDhurdhvani from "./pages/GramDhurdhvani";
 import GramHelpline from "./pages/GramHelpline";
 import GramRugnalay from "./pages/GramRugnalay";
+import TakrarNondani from "./pages/TakrarNondani";
 
 // उपक्रम pages
 import SwachhGav from "./pages/SwachhGav";
@@ -83,25 +84,14 @@ function App() {
                   <RajyaGeetSection />
 
                   {/* Grid layout for Messages + Members */}
-                  <Grid container spacing={isMobile ? 2 : 4} sx={{ width: "100%", m: 0, p: 0, justifyContent: "center" }}>
-                    <Grid item xs={12} md={6} lg={5} sx={{ 
-                      display: "flex",
-                      justifyContent: "center",
-                      px: { xs: 3, sm: 4 } // Adjust padding for mobile centering (increase to shift left)
-                    }}>
-                      <Box sx={{ width: "100%", maxWidth: { xs: "100%", md: "none" } }}>
-                        <MessagesSection />
-                      </Box>
+                  <Grid container spacing={isMobile ? 2 : 4} sx={{ width: "100%", m: 0, p: 0 }}>
+                    <Grid item xs={12} md={6} lg={5}>
+                      <MessagesSection />
                     </Grid>
                     <Grid item xs={12} md={6} lg={7} sx={{ 
-                      pr: { lg: 8 }, // Desktop: Adjust this number to shift left (increase) or right (decrease)
-                      px: { xs: 3, sm: 4 }, // Mobile: Adjust padding for mobile centering (increase to shift left)
-                      display: "flex",
-                      justifyContent: "center"
+                      pr: { lg: 8 } // Adjust this number to shift left (increase) or right (decrease)
                     }}>
-                      <Box sx={{ width: "100%", maxWidth: { xs: "100%", md: "none" } }}>
-                        <MembersSection />
-                      </Box>
+                      <MembersSection />
                     </Grid>
                   </Grid>
 
@@ -145,6 +135,7 @@ function App() {
           <Route path="/उपक्रम-सेंद्रिय खत निर्मिती" element={withNavbarPadding(GramSendriyaKhat)} />
           <Route path="/योजना-राज्य सरकार योजना" element={withNavbarPadding(GramRajyaSarkarYojna)} />
           <Route path="/योजना-केंद्र सरकार योजना" element={withNavbarPadding(GramKendraSarkarYojana)} />
+          <Route path="/तक्रार नोंदणी" element={withNavbarPadding(TakrarNondani)} />
         </Routes>
       </Box>
 
