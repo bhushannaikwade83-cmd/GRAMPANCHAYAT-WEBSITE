@@ -80,7 +80,6 @@ const GovLogosSection = () => {
         px: { xs: 2, sm: 4, lg: 6 },
         py: { xs: 4, lg: 6 },
         boxSizing: "border-box",
-        flexWrap: "wrap",
         gap: 2,
         "&::before": {
           content: '""',
@@ -124,16 +123,9 @@ const GovLogosSection = () => {
       <Box
         sx={{
           flexShrink: 0,
-          zIndex: 2,
-          display: 'flex',
-          justifyContent: { xs: 'center', sm: 'flex-start' }, // Center on mobile, left on desktop
-          alignItems: { xs: 'center', sm: 'center' },
-          width: '100%',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          height: '100%',
-          padding: { xs: 2, sm: 4 }
+          zIndex: 1,
+          display: { xs: 'none', md: 'flex' },
+          pointerEvents: "none",
         }}
       >
         <Typography
@@ -141,12 +133,11 @@ const GovLogosSection = () => {
           sx={{
             color: "white",
             fontWeight: "bold",
-            fontSize: { xs: "2rem", sm: "3rem", lg: "4rem" },
+            fontSize: { md: "3rem", lg: "4rem" },
             lineHeight: 1.2,
             textShadow: "0 4px 8px rgba(0,0,0,0.3)",
             fontFamily: "'Arial Rounded MT Bold', Arial, sans-serif",
-            textAlign: "center",
-            maxWidth: '80%'
+            whiteSpace: "nowrap",
           }}
         >
           शासकीय
@@ -178,6 +169,7 @@ const GovLogosSection = () => {
               border: "1px solid rgba(255,255,255,0.3)",
               color: "white",
               transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              zIndex: 10,
               "&:hover": {
                 backgroundColor: "rgba(255,255,255,0.3)",
                 transform: "scale(1.1) translateX(-4px)",
@@ -192,7 +184,7 @@ const GovLogosSection = () => {
           </IconButton>
 
           {/* Logo Container */}
-          <Box sx={{ position: "relative" }}>
+          <Box sx={{ position: "relative", zIndex: 10 }}>
             <Paper
               elevation={0}
               onClick={() => handleLogoClick(logos[currentIndex].link)}
@@ -304,7 +296,8 @@ const GovLogosSection = () => {
                 left: "50%",
                 transform: "translateX(-50%)",
                 display: "flex",
-                gap: 1
+                gap: 1,
+                zIndex: 10,
               }}
             >
               {logos.map((_, index) => (
@@ -343,6 +336,7 @@ const GovLogosSection = () => {
               border: "1px solid rgba(255,255,255,0.3)",
               color: "white",
               transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              zIndex: 10,
               "&:hover": {
                 backgroundColor: "rgba(255,255,255,0.3)",
                 transform: "scale(1.1) translateX(4px)",
@@ -362,16 +356,9 @@ const GovLogosSection = () => {
       <Box
         sx={{
           flexShrink: 0,
-          zIndex: 2,
-          display: 'flex',
-          justifyContent: { xs: 'center', sm: 'flex-end' }, // Center on mobile, right on desktop
-          alignItems: { xs: 'center', sm: 'center' },
-          width: '100%',
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          height: '100%',
-          padding: { xs: 2, sm: 4 }
+          zIndex: 1,
+          display: { xs: 'none', md: 'flex' },
+          pointerEvents: "none",
         }}
       >
         <Typography
@@ -379,12 +366,11 @@ const GovLogosSection = () => {
           sx={{
             color: "white",
             fontWeight: "bold",
-            fontSize: { xs: "2rem", sm: "3rem", lg: "4rem" },
+            fontSize: { md: "3rem", lg: "4rem" },
             lineHeight: 1.2,
             textShadow: "0 4px 8px rgba(0,0,0,0.3)",
             fontFamily: "'Arial Rounded MT Bold', Arial, sans-serif",
-            textAlign: "center",
-            maxWidth: '80%'
+            whiteSpace: "nowrap",
           }}
         >
           संकेतस्थळे
@@ -399,7 +385,7 @@ const GovLogosSection = () => {
           left: 0,
           width: "100%",
           overflow: "hidden",
-          zIndex: 1
+          zIndex: 0
         }}
       >
         <svg
