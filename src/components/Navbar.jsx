@@ -265,7 +265,8 @@ const Navbar = () => {
     { name: "प्रगत शेतकरी", to: "/pragat-shetkari" },
     { name: "ई-शिक्षण", to: "/e-shikshan" },
     { name: "बातम्या", to: "/batmya" },
-    { name: "संपर्क", to: "/contact" }
+    { name: "संपर्क", to: "/contact" },
+    { name: "तक्रार नोंदणी", to: "/तक्रार नोंदणी" },
   ];
 
   // Create searchable items array
