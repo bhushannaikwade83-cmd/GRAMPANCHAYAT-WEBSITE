@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Button } from '@mui/material';
 
 // Mock Link component
 const Link = ({ to, children, ...props }) => (
@@ -22,7 +23,7 @@ const isPathMatch = (locationPath, parentName, itemName) => {
 };
 
 // Generate link path
-const getLinkPath = (parentName, itemName) => `/${parentName}-${itemName}`;
+const getLinkPath = (parentName, itemName) => `/${parentName.replace(/\s+/g, "-")}-${itemName.replace(/\s+/g, "")}`;
 
 // Dropdown Button
 const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentName, location }) => {
@@ -425,6 +426,11 @@ const Navbar = () => {
 
           {/* Controls */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: 'auto' }}>
+            <Link to="/admin/login" style={{ textDecoration: 'none' }}>
+               <Button variant="contained" color="primary" sx={{ mr: 2 }}>
+                 Admin Login
+              </Button>
+             </Link>
             {!isMobile && (
               <div style={{
                 position: 'relative', 
