@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from '@mui/material';
+import { db } from '../firebase'; // Firebase db import करा
+import { doc, getDoc } from 'firebase/firestore'; // Firestore functions import करा
 
 // Mock Link component
 const Link = ({ to, children, ...props }) => (
@@ -242,6 +244,7 @@ const MobileMenu = ({ isOpen, onClose, navLinks, location }) => {
 
 // Navbar Component
 const Navbar = () => {
+  const [grampanchayatName, setGrampanchayatName] = useState("ग्रामपंचायत नाव");
   const [language, setLanguage] = useState("mr");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [grampanchayatAnchor, setGrampanchayatAnchor] = useState(null);
@@ -256,6 +259,23 @@ const Navbar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const searchInputRef = useRef(null);
   const location = useLocation();
+
+  // Fetch Gram Panchayat name from Firestore
+  useEffect(() => {
+    const fetchGpName = async () => {
+      const docRef = doc(db, 'grampanchayat', 'profile');
+      try {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          // 'title' field मधून नाव घ्या
+          setGrampanchayatName(docSnap.data().title || "ग्रामपंचायत नाव");
+        }
+      } catch (error) {
+        console.error("Error fetching Gram Panchayat name:", error);
+      }
+    };
+    fetchGpName();
+  }, []);
 
   const navLinks = [
     { name: "मुख्य पृष्ठ", to: "/" },
@@ -419,7 +439,7 @@ const Navbar = () => {
               color: 'white', fontWeight: 'bold', fontSize: '18px', animation: 'pulse 2s infinite'
             }}>🏛️</div>
             <div>
-              <h1 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', margin: 0 }}>ग्रामपंचायत नाव</h1>
+              <h1 style={{ fontSize: '20px', fontWeight: 'bold', color: 'black', margin: 0 }}>{grampanchayatName}</h1>
               <p style={{ fontSize: '12px', color: '#666', margin: 0, fontWeight: '500' }}>Grampanchayat Name</p>
             </div>
           </Link>
