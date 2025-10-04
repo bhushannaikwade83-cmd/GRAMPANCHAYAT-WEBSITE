@@ -30,7 +30,7 @@ import GramHelpline from "./pages/GramHelpline";
 import GramRugnalay from "./pages/GramRugnalay";
 import TakrarNondani from "./pages/TakrarNondani";
 
-// उपक्रम pages
+// উপक्रम pages
 import SwachhGav from "./pages/SwachhGav";
 import Vikeltepikel from "./pages/Vikeltepikel";
 import Grammajhikutumb from "./pages/Grammajhikutumb";
@@ -52,7 +52,8 @@ import GramKendraSarkarYojana from "./pages/GramKendraSarkarYojana";
 // Admin components
 import AdminLogin from "./admin/AdminLogin";
 import AdminPanel from "./admin/AdminPanel";
-import AdminLayout from "./admin/AdminLayout"; // Import the new layout
+import AdminLayout from "./admin/AdminLayout";
+import GramPanchayatProfile from "./admin/Gram-panchayat-profile"; // Import the new profile page
 
 // Main App Layout for the public website
 const MainLayout = ({ children, isMobile, navbarHeight }) => (
@@ -129,7 +130,7 @@ function App() {
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="panel" element={<AdminPanel />} />
-          {/* Add other nested admin routes here, e.g., <Route path="users" element={<UsersPage />} /> */}
+          <Route path="profile" element={<GramPanchayatProfile />} /> {/* Add the new route here */}
         </Route>
 
         {/* Main Public Website Routes */}

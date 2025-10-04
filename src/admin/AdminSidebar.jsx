@@ -3,15 +3,16 @@ import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import DescriptionIcon from '@mui/icons-material/Description';
-import LogoutIcon from '@mui/icons-material/Logout'; // Logout icon import केले
-import { Link, useNavigate } from 'react-router-dom'; // useNavigate import केले
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance'; // Icon for Gram Panchayat Profile
+import { Link, useNavigate } from 'react-router-dom';
 
 const AdminSidebar = ({ drawerWidth }) => {
-  const navigate = useNavigate(); // Navigation साठी hook
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    // प्रत्यक्ष ॲपमध्ये, तुम्ही येथे ऑथेंटिकेशन टोकन क्लिअर कराल
-    navigate('/'); // होमपेजवर परत जा
+    // In a real app, you would clear authentication tokens here
+    navigate('/'); // Navigate back to the homepage
   };
 
   return (
@@ -41,6 +42,16 @@ const AdminSidebar = ({ drawerWidth }) => {
             </ListItemButton>
           </ListItem>
 
+          {/* Gram Panchayat Profile Link */}
+          <ListItem disablePadding component={Link} to="/admin/profile" sx={{color: 'inherit', textDecoration: 'none'}}>
+            <ListItemButton>
+              <ListItemIcon>
+                <AccountBalanceIcon />
+              </ListItemIcon>
+              <ListItemText primary="Gram Panchayat Profile" />
+            </ListItemButton>
+          </ListItem>
+
           {/* Manage Members Link (Example) */}
           <ListItem disablePadding>
             <ListItemButton>
@@ -63,7 +74,7 @@ const AdminSidebar = ({ drawerWidth }) => {
         </List>
       </Box>
       
-      {/* Logout बटण सर्वात खाली */}
+      {/* Logout Button at the bottom */}
       <Box sx={{ marginTop: 'auto' }}>
         <Divider />
         <List>
