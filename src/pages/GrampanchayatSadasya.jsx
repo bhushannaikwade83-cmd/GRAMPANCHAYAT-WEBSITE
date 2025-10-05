@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Grid, Typography, Box, Avatar, Paper, CircularProgress, Divider } from "@mui/material";
 import Layout from "../components/Layout";
 import { db } from '../firebase';
-import { collection, getDocs, query, orderBy, doc } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, doc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 
 const GrampanchayatSadasya = () => {
@@ -36,7 +36,7 @@ const GrampanchayatSadasya = () => {
         fetchData();
     }, []);
 
-    const officeBearers = members.filter(m => ["सरपंच", "उपसरपंच", "ग्राम सेवक (Gram Sevak)"].includes(m.designation));
+    const officeBearers = members.filter(m => ["सरपंच", "उपसरपंच", "ग्राम सेवक", "ग्राम सेवक (Gram Sevak)"].includes(m.designation));
     const generalMembers = members.filter(m => m.designation === "सदस्य");
 
     const MemberCard = ({ member, index }) => (
@@ -77,7 +77,7 @@ const GrampanchayatSadasya = () => {
                     }}
                 >
                     <Avatar 
-                        src={member.photoURL} 
+                        src={member.imageURL || member.photoURL} 
                         alt={member.name} 
                         sx={{ 
                             width: 80, 

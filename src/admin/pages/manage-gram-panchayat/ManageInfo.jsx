@@ -15,9 +15,11 @@ import {
 import { PhotoCamera, Save, Edit } from '@mui/icons-material';
 
 // Firebase imports
-import { db, storage } from '../../../firebase';
+import { db } from '../../../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
+// Cloudinary Uploader
+import CloudinaryUploader from '../../components/CloudinaryUploader';
 
 const ManageInfo = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +30,6 @@ const ManageInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
 
   // Fetch existing data for both profile (for the name) and mainInfo
@@ -68,29 +69,9 @@ const ManageInfo = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const storageRef = ref(storage, `info_section/${file.name}_${Date.now()}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress);
-      },
-      (error) => {
-        setNotification({ open: true, message: 'Photo upload failed!', severity: 'error' });
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData((prev) => ({ ...prev, photo: downloadURL }));
-          setUploadProgress(0);
-          setNotification({ open: true, message: 'Photo uploaded successfully!', severity: 'success' });
-        });
-      }
-    );
+  const handlePhotoUpload = (imageUrl) => {
+    setFormData((prev) => ({ ...prev, photo: imageUrl }));
+    setNotification({ open: true, message: 'फोटो यशस्वीरित्या अपलोड झाला!', severity: 'success' });
   };
 
   const handleSubmit = async () => {
@@ -163,36 +144,27 @@ const ManageInfo = () => {
             <Typography variant="h6" gutterBottom>
               फोटो
             </Typography>
-            <Box
-              sx={{
-                border: isEditing ? '2px dashed #ccc' : '2px solid #eee',
-                borderRadius: 2,
-                height: 300,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundImage: `url(${formData.photo})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              {!formData.photo && <Typography color="text.secondary">फोटो येथे दिसेल</Typography>}
-            </Box>
-            {isEditing && (
-                <Box>
-                    <Button
-                        fullWidth
-                        variant="outlined"
-                        component="label"
-                        startIcon={<PhotoCamera />}
-                        sx={{ mt: 2 }}
-                        disabled={uploadProgress > 0}
-                    >
-                        फोटो बदला
-                        <input type="file" hidden accept="image/*" onChange={handlePhotoChange} />
-                    </Button>
-                    {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} sx={{ mt: 2 }} />}
-                </Box>
+            {isEditing ? (
+              <CloudinaryUploader
+                folder="grampanchayat_images/info"
+                onUpload={handlePhotoUpload}
+              />
+            ) : (
+              <Box
+                sx={{
+                  border: '2px solid #eee',
+                  borderRadius: 2,
+                  height: 300,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundImage: formData.photo ? `url(${formData.photo})` : 'none',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
+                {!formData.photo && <Typography color="text.secondary">फोटो येथे दिसेल</Typography>}
+              </Box>
             )}
           </Grid>
         </Grid>
@@ -203,7 +175,7 @@ const ManageInfo = () => {
                 variant="contained"
                 color="primary"
                 size="large"
-                disabled={saving || uploadProgress > 0}
+                disabled={saving}
                 startIcon={saving ? <CircularProgress size={20} color="inherit" /> : <Save />}
                 onClick={handleSubmit}
               >

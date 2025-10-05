@@ -7,9 +7,11 @@ import {
   Card, CardContent, Fade, Grow
 } from '@mui/material';
 import { Add, Edit, Delete, PhotoCamera, Person } from '@mui/icons-material';
-import { db, storage } from '../../../firebase';
+import { db } from '../../../firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
+
+// Cloudinary Uploader
+import CloudinaryUploader from '../../components/CloudinaryUploader';
 
 const initialMemberState = { name: '', designation: '', photoURL: '', order: 0 };
 
@@ -19,8 +21,6 @@ const ManageMembers = () => {
   const [open, setOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentMember, setCurrentMember] = useState(initialMemberState);
-  const [imageFile, setImageFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [saving, setSaving] = useState(false);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
 
@@ -55,8 +55,6 @@ const ManageMembers = () => {
   }, [members, isEditing, currentMember.designation, fixedRoles]);
 
   const handleOpen = (member = null) => {
-    setImageFile(null);
-    setUploadProgress(0);
     if (member) {
       setIsEditing(true);
       setCurrentMember(member);
@@ -72,30 +70,22 @@ const ManageMembers = () => {
     setOpen(false);
   };
 
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+  const handleImageUploadSuccess = (imageUrl, cloudinaryData) => {
+    // Update the current member with the new image URL
+    setCurrentMember(prev => ({ ...prev, photoURL: imageUrl, imageURL: imageUrl }));
+    
+    if (imageUrl) {
+      setNotification({ open: true, message: 'फोटो यशस्वीरित्या अपलोड झाला!', severity: 'success' });
+      console.log('Image uploaded successfully:', { imageUrl, cloudinaryData });
+    } else {
+      setNotification({ open: true, message: 'फोटो हटवला गेला!', severity: 'info' });
+      console.log('Image removed');
     }
   };
 
-  const uploadImage = async (file) => {
-    return new Promise((resolve, reject) => {
-      if (!file) {
-        resolve(currentMember.photoURL || '');
-        return;
-      }
-
-      const storageRef = ref(storage, `members/${file.name}_${Date.now()}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on('state_changed',
-        (snapshot) => setUploadProgress((snapshot.bytesTransferred / snapshot.totalBytes) * 100),
-        (error) => reject(error),
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then(resolve).catch(reject);
-        }
-      );
-    });
+  const handleImageUploadError = (errorMessage) => {
+    setNotification({ open: true, message: errorMessage, severity: 'error' });
+    console.error('Image upload failed:', errorMessage);
   };
 
   const handleSubmit = async (e) => {
@@ -106,28 +96,42 @@ const ManageMembers = () => {
     }
     setSaving(true);
     try {
-      let photoURL = currentMember.photoURL;
-      if (imageFile) {
-        if (isEditing && currentMember.photoURL) {
-          try {
-            await deleteObject(ref(storage, currentMember.photoURL));
-          } catch (error) {
-            if (error.code !== 'storage/object-not-found') console.warn("जुना फोटो हटवण्यात अयशस्वी:", error);
-          }
-        }
-        photoURL = await uploadImage(imageFile);
+      // Validate required fields
+      if (!currentMember.name || !currentMember.designation) {
+        setNotification({ open: true, message: 'नाव आणि पद आवश्यक आहे.', severity: 'warning' });
+        return;
       }
 
-      const dataToSave = { ...currentMember, photoURL };
+      const dataToSave = { 
+        name: currentMember.name,
+        designation: currentMember.designation,
+        order: currentMember.order || 0,
+        updatedAt: new Date()
+      };
+
+      // Only add imageURL if it exists
+      const imageUrl = currentMember.photoURL || currentMember.imageURL;
+      if (imageUrl) {
+        dataToSave.imageURL = imageUrl;
+        dataToSave.photoURL = imageUrl; // Keep photoURL for backward compatibility
+      }
+
+      // Only add createdAt for new members, not when editing
+      if (!isEditing) {
+        dataToSave.createdAt = new Date();
+      }
 
       if (isEditing) {
         const memberDoc = doc(db, 'members', currentMember.id);
+        console.log('Updating member:', currentMember.id, dataToSave);
         await updateDoc(memberDoc, dataToSave);
       } else {
+        console.log('Adding new member:', dataToSave);
         await addDoc(membersCollectionRef, dataToSave);
       }
       
       setNotification({ open: true, message: `सदस्य यशस्वीरित्या ${isEditing ? 'अपडेट' : 'जोडला'}!`, severity: 'success' });
+      console.log('Member saved successfully:', dataToSave);
       fetchMembers();
       handleClose();
     } catch (error) {
@@ -141,9 +145,6 @@ const ManageMembers = () => {
     if (window.confirm("तुम्हाला खात्री आहे? ही क्रिया पूर्ववत केली जाऊ शकत नाही.")) {
       try {
         await deleteDoc(doc(db, 'members', id));
-        if (photoURL) {
-          await deleteObject(ref(storage, photoURL));
-        }
         setNotification({ open: true, message: 'सदस्य यशस्वीरित्या हटवला.', severity: 'success' });
         fetchMembers();
       } catch (error) {
@@ -172,11 +173,15 @@ const ManageMembers = () => {
                   }
                 }}>
                   <ListItem>
-                    <ListItemAvatar>
-                      <Avatar src={member.photoURL} alt={member.name} sx={{ width: 56, height: 56, mr: 2 }}>
-                        {!member.photoURL && <Person />}
-                      </Avatar>
-                    </ListItemAvatar>
+                     <ListItemAvatar>
+                       <Avatar 
+                         src={member.imageURL || member.photoURL} 
+                         alt={member.name} 
+                         sx={{ width: 56, height: 56, mr: 2 }}
+                       >
+                         {!(member.imageURL || member.photoURL) && <Person />}
+                       </Avatar>
+                     </ListItemAvatar>
                     <ListItemText 
                       primary={<Typography variant="h6" component="div">{member.name}</Typography>} 
                       secondary={member.designation} 
@@ -205,18 +210,19 @@ const ManageMembers = () => {
               </Select>
             </FormControl>
             <TextField margin="dense" label="क्रम" type="number" fullWidth required variant="outlined" value={currentMember.order} onChange={(e) => setCurrentMember({ ...currentMember, order: Number(e.target.value) })} helperText="कमी क्रमांक आधी दिसेल." sx={{ mb: 2 }} />
-            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-              <Button variant="outlined" component="label" startIcon={<PhotoCamera />} disabled={uploadProgress > 0}>
-                फोटो अपलोड करा <input type="file" hidden accept="image/*" onChange={handleFileChange} />
-              </Button>
-              {imageFile && <Typography variant="body2" noWrap>{imageFile.name}</Typography>}
+            
+            <Box sx={{ mt: 2 }}>
+              <CloudinaryUploader
+                memberId={currentMember.id || 'new'}
+                currentImageUrl={currentMember.imageURL || currentMember.photoURL}
+                onUploadSuccess={handleImageUploadSuccess}
+                onUploadError={handleImageUploadError}
+              />
             </Box>
-            {uploadProgress > 0 && <LinearProgress variant="determinate" value={uploadProgress} sx={{ mt: 1 }} />}
-            {!imageFile && currentMember.photoURL && <FormHelperText sx={{ mt: 1 }}>सध्याचा फोटो सेट आहे. बदलण्यासाठी नवीन फोटो अपलोड करा.</FormHelperText>}
           </DialogContent>
           <DialogActions sx={{ p: '16px 24px' }}>
             <Button onClick={handleClose}>रद्द करा</Button>
-            <Button type="submit" variant="contained" disabled={saving || uploadProgress > 0}>{saving ? 'सेव्ह होत आहे...' : 'सेव्ह करा'}</Button>
+            <Button type="submit" variant="contained" disabled={saving}>{saving ? 'सेव्ह होत आहे...' : 'सेव्ह करा'}</Button>
           </DialogActions>
         </form>
       </Dialog>
