@@ -28,6 +28,7 @@ import Gramjanganna from "./pages/Gramjanganna";
 import GramDhurdhvani from "./pages/GramDhurdhvani";
 import GramHelpline from "./pages/GramHelpline";
 import GramRugnalay from "./pages/GramRugnalay";
+import GramEseva from "./pages/GramEseva";
 import TakrarNondani from "./pages/TakrarNondani";
 import SwachhGav from "./pages/SwachhGav";
 import Vikeltepikel from "./pages/Vikeltepikel";
@@ -57,12 +58,12 @@ import GramPanchayatProfile from "./admin/Gram-panchayat-profile";
 import ManageInfo from "./admin/pages/manage-gram-panchayat/ManageInfo";
 import ManageMap from "./admin/pages/manage-gram-panchayat/ManageMap";
 import ManageMembers from "./admin/pages/manage-gram-panchayat/ManageMembers";
-const ManageDecisions = () => <Box p={4}><Typography variant="h4">निर्णय व्यवस्थापन पेज</Typography></Box>;
-const ManageAwards = () => <Box p={4}><Typography variant="h4">पुरस्कार व्यवस्थापन पेज</Typography></Box>;
-const ManageFestivals = () => <Box p={4}><Typography variant="h4">सण/उत्सव व्यवस्थापन पेज</Typography></Box>;
-const ManageFacilities = () => <Box p={4}><Typography variant="h4">सुविधा व्यवस्थापन पेज</Typography></Box>;
-const ManageESeva = () => <Box p={4}><Typography variant="h4">ई-सेवा व्यवस्थापन पेज</Typography></Box>;
-const ManageTourism = () => <Box p={4}><Typography variant="h4">पर्यटन स्थळे व्यवस्थापन पेज</Typography></Box>;
+import ManageDecisions from "./admin/pages/manage-gram-panchayat/ManageDecisions";
+import ManageAwards from "./admin/pages/manage-gram-panchayat/ManageAwards";
+import ManageFestivals from "./admin/pages/manage-gram-panchayat/ManageFestivals";
+import ManageFacilities from "./admin/pages/manage-gram-panchayat/ManageFacilities";
+import ManageESeva from "./admin/pages/manage-gram-panchayat/ManageESeva";
+import ManageTourism from "./admin/pages/manage-gram-panchayat/ManageTourism";
 const ManageComplaints = () => <Box p={4}><Typography variant="h4">तक्रार व्यवस्थापन पेज</Typography></Box>;
 
 
@@ -101,6 +102,7 @@ const MainLayout = ({ isMobile, navbarHeight }) => (
         <Route path="/ग्रामपंचायत-पुरस्कार" element={<GramPuraskar />} />
         <Route path="/ग्रामपंचायत-सण-उत्सव" element={<Festival />} />
         <Route path="/ग्रामपंचायत-सुविधा" element={<GramSuvidha />} />
+        <Route path="/ग्रामपंचायत-ई-सेवा" element={<GramEseva />} />
         <Route path="/ग्रामपंचायत-पर्यटन-सथळे" element={<Gramparyatansthale />} />
         <Route path="/निर्देशिका-जनगणना" element={<Gramjanganna />} />
         <Route path="/निर्देशिका-दूरध्वनी-क्रमांक" element={<GramDhurdhvani />} />
