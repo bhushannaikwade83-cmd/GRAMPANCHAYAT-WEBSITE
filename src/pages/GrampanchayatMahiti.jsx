@@ -7,39 +7,47 @@ import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 const GrampanchayatMahiti = () => {
-  const [profile, setProfile] = useState(null);
+  const [info, setInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const docRef = doc(db, 'grampanchayat', 'profile');
+    const fetchData = async () => {
+      setLoading(true);
       try {
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setProfile(docSnap.data());
-        } else {
-          console.log("No such document!");
-          // Set default data if no profile is found in DB
-          setProfile({
-            title: "ग्रामपंचायत माहिती उपलब्ध नाही",
-            details: "कृपया Admin Panel मधून माहिती अपडेट करा.",
-            photo: "https://placehold.co/600x400/ff0000/ffffff?text=Error",
-          });
-        }
+        // Fetch details and photo from the 'mainInfo' document
+        const mainInfoDocRef = doc(db, 'grampanchayat', 'mainInfo');
+        const mainInfoSnap = await getDoc(mainInfoDocRef);
+        const mainInfoData = mainInfoSnap.exists()
+          ? mainInfoSnap.data()
+          : { details: "माहिती उपलब्ध नाही. कृपया Admin Panel मधून माहिती अपडेट करा.", photo: "" };
+
+        // Fetch the title from the 'profile' document
+        const profileDocRef = doc(db, 'grampanchayat', 'profile');
+        const profileSnap = await getDoc(profileDocRef);
+        const profileData = profileSnap.exists()
+          ? profileSnap.data()
+          : { title: "ग्रामपंचायत" };
+
+        // Combine data from both documents into a single state object
+        setInfo({
+          title: profileData.title,
+          details: mainInfoData.details,
+          photo: mainInfoData.photo,
+        });
+
       } catch (error) {
-        console.error("Error fetching profile: ", error);
-        // Set error state data
-        setProfile({
-            title: "माहिती लोड करण्यात अयशस्वी",
-            details: "कृपया आपले इंटरनेट कनेक्शन तपासा.",
-            photo: "https://placehold.co/600x400/ff0000/ffffff?text=Error",
-          });
+        console.error("Error fetching Gram Panchayat data: ", error);
+        setInfo({
+          title: "माहिती लोड करण्यात अयशस्वी",
+          details: "कृपया आपले इंटरनेट कनेक्शन तपासा आणि पेज रिफ्रेश करा.",
+          photo: "https://placehold.co/600x400/ff0000/ffffff?text=Error",
+        });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfile();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -61,8 +69,8 @@ const GrampanchayatMahiti = () => {
           <Grid item xs={12} md={6}>
             <Box
               component="img"
-              src={profile.photo || "https://placehold.co/600x400/cccccc/ffffff?text=Photo+Not+Available"}
-              alt={profile.title}
+              src={info.photo || "https://placehold.co/600x400/cccccc/ffffff?text=Photo+Not+Available"}
+              alt={info.title}
               sx={{ 
                 width: "100%", 
                 height: "auto",
@@ -77,10 +85,10 @@ const GrampanchayatMahiti = () => {
           {/* Right Side - Info */}
           <Grid item xs={12} md={6}>
             <Typography variant="h4" fontWeight="bold" gutterBottom>
-              {profile.title}
+              {info.title}
             </Typography>
             <Typography variant="body1" sx={{ lineHeight: 1.8, whiteSpace: 'pre-line' }}>
-              {profile.details}
+              {info.details}
             </Typography>
           </Grid>
         </Grid>

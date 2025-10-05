@@ -9,6 +9,7 @@
     "@mui/material": "^5.15.14",
     "axios": "^1.11.0",
     "firebase": "^12.3.0",
+    "framer-motion": "^12.23.22",
     "i18next": "^25.5.2",
     "lucide-react": "^0.542.0",
     "react": "^18.3.1",

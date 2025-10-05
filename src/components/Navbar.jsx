@@ -15,7 +15,8 @@ const useLocation = () => ({ pathname: "/" });
 
 // Normalize paths
 const isPathMatch = (locationPath, parentName, itemName) => {
-  const normalizeDash = str => str.replace(/\s+/g, "-");
+  // Replace spaces and slashes with dashes to match App.jsx route format
+  const normalizeDash = str => str.replace(/[\s\/]+/g, "-");
   const normalizeConcat = str => str.replace(/\s+/g, "");
   const normalizeSpace = str => str;
   const dashed = `/${normalizeDash(parentName)}-${normalizeDash(itemName)}`;
@@ -24,8 +25,8 @@ const isPathMatch = (locationPath, parentName, itemName) => {
   return locationPath === dashed || locationPath === concat || locationPath === space;
 };
 
-// Generate link path
-const getLinkPath = (parentName, itemName) => `/${parentName.replace(/\s+/g, "-")}-${itemName.replace(/\s+/g, "")}`;
+// Generate link path (use dashes for both parent and item; convert slashes)
+const getLinkPath = (parentName, itemName) => `/${parentName.replace(/[\s\/]+/g, "-")}-${itemName.replace(/[\s\/]+/g, "-")}`;
 
 // Dropdown Button
 const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentName, location }) => {
@@ -279,6 +280,7 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "मुख्य पृष्ठ", to: "/" },
+    // Keep display names as-is; path builder will convert to App routes
     { name: "ग्रामपंचायत", dropdown: ["माहिती", "नकाशा", "सदस्य", "ग्रामसभेचे निर्णय", "पुरस्कार", "सण/उत्सव", "सुविधा", "ई-सेवा", "पर्यटन सथळे"] },
     { name: "निर्देशिका", dropdown: ["जनगणना", "दूरध्वनी क्रमांक", "हेल्पलाइन", "रुग्णालय"] },
     { name: "उपक्रम", dropdown: ["स्वच्छ गाव", "विकेल-ते-पिकेल", "माझे-कुटुंब माझी-जबाबदारी", "तंटामुक्त गाव", "जलयुक्त शिवार", "तुषारगावड", "रोती पूरक व्यवसाय", "गादोली", "मतदार नोंदणी", "सर्व शिक्षा अभियान", "क्रीडा स्पर्धा", "आरोग्य शिबिर", "कचऱ्याचे नियोजन", "बायोगॅस निर्मिती", "सेंद्रिय खत निर्मिती"] },
