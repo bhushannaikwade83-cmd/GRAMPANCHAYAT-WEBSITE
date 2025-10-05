@@ -66,6 +66,12 @@ import ManageESeva from "./admin/pages/manage-gram-panchayat/ManageESeva";
 import ManageTourism from "./admin/pages/manage-gram-panchayat/ManageTourism";
 const ManageComplaints = () => <Box p={4}><Typography variant="h4">तक्रार व्यवस्थापन पेज</Typography></Box>;
 
+// Admin Pages: निर्देशिका
+import Janaganana from "./admin/pages/manage-nirdeshika/Janaganana";
+import Contacts from "./admin/pages/manage-nirdeshika/Contacts";
+import Helpline from "./admin/pages/manage-nirdeshika/Helpline";
+import Hospitals from "./admin/pages/manage-nirdeshika/Hospitals";
+
 
 // This component wraps all the public-facing pages with Navbar and Footer
 const MainLayout = ({ isMobile, navbarHeight }) => (
@@ -158,6 +164,12 @@ function App() {
         <Route path="manage/eseva" element={<ManageESeva />} />
         <Route path="manage/tourism" element={<ManageTourism />} />
         <Route path="manage/complaints" element={<ManageComplaints />} />
+
+        {/* निर्देशिका */}
+        <Route path="manage-nirdeshika/janaganana" element={<Janaganana />} />
+        <Route path="manage-nirdeshika/contacts" element={<Contacts />} />
+        <Route path="manage-nirdeshika/helpline" element={<Helpline />} />
+        <Route path="manage-nirdeshika/hospitals" element={<Hospitals />} />
       </Route>
 
       {/* Main Public Website Routes */}

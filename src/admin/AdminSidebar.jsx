@@ -16,10 +16,15 @@ import HomeWorkIcon from '@mui/icons-material/HomeWork';
 import LanguageIcon from '@mui/icons-material/Language';
 import TourIcon from '@mui/icons-material/Tour';
 import AssignmentIcon from '@mui/icons-material/Assignment'; // Icon for Takrar
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 
 const AdminSidebar = ({ drawerWidth }) => {
   const navigate = useNavigate();
   const [openGrampanchayat, setOpenGrampanchayat] = useState(true);
+  const [openNirdeshika, setOpenNirdeshika] = useState(true);
 
   const handleGrampanchayatClick = () => {
     setOpenGrampanchayat(!openGrampanchayat);
@@ -87,6 +92,41 @@ const AdminSidebar = ({ drawerWidth }) => {
                     </ListItemButton>
                  </ListItem>
               ))}
+            </List>
+          </Collapse>
+
+          {/* निर्देशिका Section */}
+          <ListItemButton onClick={() => setOpenNirdeshika(!openNirdeshika)}>
+            <ListItemIcon><DescriptionIcon /></ListItemIcon>
+            <ListItemText primary="निर्देशिका" />
+            {openNirdeshika ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openNirdeshika} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItem disablePadding component={Link} to="/admin/manage-nirdeshika/janaganana">
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemIcon><ListAltIcon /></ListItemIcon>
+                  <ListItemText primary="जनगणना" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding component={Link} to="/admin/manage-nirdeshika/contacts">
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemIcon><ContactPhoneIcon /></ListItemIcon>
+                  <ListItemText primary="दूरध्वनी क्रमांक" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding component={Link} to="/admin/manage-nirdeshika/helpline">
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemIcon><HelpOutlineIcon /></ListItemIcon>
+                  <ListItemText primary="हेल्पलाईन" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding component={Link} to="/admin/manage-nirdeshika/hospitals">
+                <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemIcon><LocalHospitalIcon /></ListItemIcon>
+                  <ListItemText primary="रुग्णालय" />
+                </ListItemButton>
+              </ListItem>
             </List>
           </Collapse>
           
