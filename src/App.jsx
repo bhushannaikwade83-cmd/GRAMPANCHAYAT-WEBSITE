@@ -47,6 +47,10 @@ import GramBiogasNirmiti from "./pages/GramBiogasNirmiti";
 import GramSendriyaKhat from "./pages/GramSendriyaKhat";
 import GramRajyaSarkarYojna from "./pages/GramRajyaSarkarYojna";
 import GramKendraSarkarYojana from "./pages/GramKendraSarkarYojana";
+import PragatShetkari from "./pages/PragatShetkari";
+import EShikshan from "./pages/EShikshan";
+import Batmya from "./pages/Batmya";
+import Sampark from "./pages/Sampark";
 
 // Admin Components
 import AdminLogin from "./admin/AdminLogin";
@@ -90,6 +94,10 @@ import ManageBiogasNirmiti from "./admin/pages/program/ManageBiogasNirmiti";
 import ManageSendriyaKhat from "./admin/pages/program/ManageSendriyaKhat";
 import ManageStateYojana from "./admin/pages/yojana/ManageStateYojana";
 import ManageCentralYojana from "./admin/pages/yojana/ManageCentralYojana";
+import ManagePragatShetkari from "./admin/pages/extra/ManagePragatShetkari";
+import ManageEShikshan from "./admin/pages/extra/ManageEShikshan";
+import ManageBatmya from "./admin/pages/extra/ManageBatmya";
+import ManageSampark from "./admin/pages/extra/ManageSampark";
 
 
 // This component wraps all the public-facing pages with Navbar and Footer
@@ -151,6 +159,11 @@ const MainLayout = ({ isMobile, navbarHeight }) => (
         <Route path="/योजना-राज्य-सरकार-योजना" element={<GramRajyaSarkarYojna />} />
         <Route path="/योजना-केंद्र-सरकार-योजना" element={<GramKendraSarkarYojana />} />
         <Route path="/तक्रार-नोंदणी" element={<TakrarNondani />} />
+        {/* Extra public pages */}
+        <Route path="/pragat-shetkari" element={<PragatShetkari />} />
+        <Route path="/e-shikshan" element={<EShikshan />} />
+        <Route path="/batmya" element={<Batmya />} />
+        <Route path="/sampark" element={<Sampark />} />
       </Routes>
     </Box>
     <Footer />
@@ -209,6 +222,11 @@ function App() {
         {/* योजना व्यवस्थापन */}
         <Route path="yojana/state" element={<ManageStateYojana />} />
         <Route path="yojana/central" element={<ManageCentralYojana />} />
+        {/* अतिरिक्त व्यवस्थापन */}
+        <Route path="extra/pragat-shetkari" element={<ManagePragatShetkari />} />
+        <Route path="extra/e-shikshan" element={<ManageEShikshan />} />
+        <Route path="extra/batmya" element={<ManageBatmya />} />
+        <Route path="extra/sampark" element={<ManageSampark />} />
       </Route>
 
       {/* Main Public Website Routes */}
