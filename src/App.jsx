@@ -66,6 +66,29 @@ import ManageESeva from "./admin/pages/manage-gram-panchayat/ManageESeva";
 import ManageTourism from "./admin/pages/manage-gram-panchayat/ManageTourism";
 const ManageComplaints = () => <Box p={4}><Typography variant="h4">तक्रार व्यवस्थापन पेज</Typography></Box>;
 
+// Admin Pages: निर्देशिका
+import Janaganana from "./admin/pages/manage-nirdeshika/Janaganana";
+import Contacts from "./admin/pages/manage-nirdeshika/Contacts";
+import Helpline from "./admin/pages/manage-nirdeshika/Helpline";
+import Hospitals from "./admin/pages/manage-nirdeshika/Hospitals";
+
+// Admin Pages: Program Management
+import ManageSvachhGaav from "./admin/pages/program/ManageSvachhGaav";
+import ManageVikelTePikel from "./admin/pages/program/ManageVikelTePikel";
+import ManageMaajheKutumb from "./admin/pages/program/ManageMaajheKutumb";
+import ManageTantamuktGaav from "./admin/pages/program/ManageTantamuktGaav";
+import ManageJalyuktShivar from "./admin/pages/program/ManageJalyuktShivar";
+import ManageTushargaavad from "./admin/pages/program/ManageTushargaavad";
+import ManageRotiPoorak from "./admin/pages/program/ManageRotiPoorak";
+import ManageGadoli from "./admin/pages/program/ManageGadoli";
+import ManageMatdaarNondani from "./admin/pages/program/ManageMatdaarNondani";
+import ManageSarvaShiksha from "./admin/pages/program/ManageSarvaShiksha";
+import ManageKreedaSpardha from "./admin/pages/program/ManageKreedaSpardha";
+import ManageAarogyaShibir from "./admin/pages/program/ManageAarogyaShibir";
+import ManageKachryacheNiyojan from "./admin/pages/program/ManageKachryacheNiyojan";
+import ManageBiogasNirmiti from "./admin/pages/program/ManageBiogasNirmiti";
+import ManageSendriyaKhat from "./admin/pages/program/ManageSendriyaKhat";
+
 
 // This component wraps all the public-facing pages with Navbar and Footer
 const MainLayout = ({ isMobile, navbarHeight }) => (
@@ -158,6 +181,29 @@ function App() {
         <Route path="manage/eseva" element={<ManageESeva />} />
         <Route path="manage/tourism" element={<ManageTourism />} />
         <Route path="manage/complaints" element={<ManageComplaints />} />
+
+        {/* निर्देशिका */}
+        <Route path="manage-nirdeshika/janaganana" element={<Janaganana />} />
+        <Route path="manage-nirdeshika/contacts" element={<Contacts />} />
+        <Route path="manage-nirdeshika/helpline" element={<Helpline />} />
+        <Route path="manage-nirdeshika/hospitals" element={<Hospitals />} />
+
+        {/* कार्यक्रम व्यवस्थापन */}
+        <Route path="program/svachh-gaav" element={<ManageSvachhGaav />} />
+        <Route path="program/vikel-te-pikel" element={<ManageVikelTePikel />} />
+        <Route path="program/maajhe-kutumb" element={<ManageMaajheKutumb />} />
+        <Route path="program/tantamukt-gaav" element={<ManageTantamuktGaav />} />
+        <Route path="program/jalyukt-shivar" element={<ManageJalyuktShivar />} />
+        <Route path="program/tushargaavad" element={<ManageTushargaavad />} />
+        <Route path="program/roti-poorak" element={<ManageRotiPoorak />} />
+        <Route path="program/gadoli" element={<ManageGadoli />} />
+        <Route path="program/matdaar-nondani" element={<ManageMatdaarNondani />} />
+        <Route path="program/sarva-shiksha" element={<ManageSarvaShiksha />} />
+        <Route path="program/kreeda-spardha" element={<ManageKreedaSpardha />} />
+        <Route path="program/aarogya-shibir" element={<ManageAarogyaShibir />} />
+        <Route path="program/kachryache-niyojan" element={<ManageKachryacheNiyojan />} />
+        <Route path="program/biogas-nirmiti" element={<ManageBiogasNirmiti />} />
+        <Route path="program/sendriya-khat" element={<ManageSendriyaKhat />} />
       </Route>
 
       {/* Main Public Website Routes */}

@@ -15,7 +15,8 @@ const CloudinaryUploader = ({
   onUploadError, 
   memberId, 
   currentImageUrl = null,
-  disabled = false 
+  disabled = false,
+  title = 'सदस्य फोटो' 
 }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -162,7 +163,7 @@ const CloudinaryUploader = ({
   return (
     <Paper elevation={1} sx={{ p: 2, borderRadius: 2 }}>
       <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'bold' }}>
-        सदस्य फोटो
+        {title}
       </Typography>
       {/* Always-mounted hidden file input so re-upload works reliably */}
       <input
