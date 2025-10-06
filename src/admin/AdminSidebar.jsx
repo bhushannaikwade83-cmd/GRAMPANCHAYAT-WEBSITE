@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, Divider, Collapse } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import InfoIcon from '@mui/icons-material/Info';
 import MapIcon from '@mui/icons-material/Map';
@@ -37,13 +37,20 @@ import StarIcon from '@mui/icons-material/Star';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import ArticleIcon from '@mui/icons-material/Article';
 import ContactMailIcon from '@mui/icons-material/ContactMail';
+import HomeIcon from '@mui/icons-material/Home';
+import ImageIcon from '@mui/icons-material/Image';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import ChatIcon from '@mui/icons-material/Chat';
 
 const AdminSidebar = ({ drawerWidth }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [openGrampanchayat, setOpenGrampanchayat] = useState(true);
   const [openNirdeshika, setOpenNirdeshika] = useState(true);
   const [openPrograms, setOpenPrograms] = useState(true);
   const [openYojana, setOpenYojana] = useState(true);
+  const [openHome, setOpenHome] = useState(true);
+  const [openExtra, setOpenExtra] = useState(true);
 
   const handleGrampanchayatClick = () => {
     setOpenGrampanchayat(!openGrampanchayat);
@@ -57,6 +64,25 @@ const AdminSidebar = ({ drawerWidth }) => {
     // Add Firebase auth.signOut() logic here
     navigate('/admin/login');
   };
+  
+  // Restore persisted open states
+  useEffect(() => {
+    const persisted = JSON.parse(localStorage.getItem('adminSidebarOpenStates') || '{}');
+    if (typeof persisted.openGrampanchayat === 'boolean') setOpenGrampanchayat(persisted.openGrampanchayat);
+    if (typeof persisted.openNirdeshika === 'boolean') setOpenNirdeshika(persisted.openNirdeshika);
+    if (typeof persisted.openPrograms === 'boolean') setOpenPrograms(persisted.openPrograms);
+    if (typeof persisted.openYojana === 'boolean') setOpenYojana(persisted.openYojana);
+    if (typeof persisted.openHome === 'boolean') setOpenHome(persisted.openHome);
+    if (typeof persisted.openExtra === 'boolean') setOpenExtra(persisted.openExtra);
+  }, []);
+
+  // Persist open states
+  useEffect(() => {
+    const state = { openGrampanchayat, openNirdeshika, openPrograms, openYojana, openHome, openExtra };
+    localStorage.setItem('adminSidebarOpenStates', JSON.stringify(state));
+  }, [openGrampanchayat, openNirdeshika, openPrograms, openYojana, openHome, openExtra]);
+
+  const isActive = (path) => location.pathname.startsWith(path);
   
   const menuItems = [
     { text: 'माहिती', icon: <InfoIcon />, path: '/admin/manage/info' },
@@ -93,6 +119,19 @@ const AdminSidebar = ({ drawerWidth }) => {
     { text: 'केंद्र सरकार योजना', icon: <AssignmentIcon />, path: '/admin/yojana/central' },
   ];
 
+  const homePageItems = [
+    { text: 'नेव्हबार', icon: <DashboardIcon />, path: '/admin/home/navbar' },
+    { text: 'वेलकम सेक्शन', icon: <HomeIcon />, path: '/admin/home/welcome' },
+    { text: 'फोटो सेक्शन', icon: <ImageIcon />, path: '/admin/home/photos' },
+    { text: 'राज्य गीत', icon: <MusicNoteIcon />, path: '/admin/home/rajya-geet' },
+    { text: 'संदेश', icon: <ChatIcon />, path: '/admin/home/messages' },
+    { text: 'सदस्य', icon: <PeopleIcon />, path: '/admin/home/members' },
+    { text: 'ग्रामपंचायत माहिती', icon: <InfoIcon />, path: '/admin/home/info' },
+    { text: 'डिजिटल घोषवाक्य', icon: <ArticleIcon />, path: '/admin/home/digital-slogans' },
+    { text: 'शासकीय लोगो', icon: <LanguageIcon />, path: '/admin/home/gov-logos' },
+    { text: 'फूटर', icon: <ArticleIcon />, path: '/admin/home/footer' },
+  ];
+
   const extraItems = [
     { text: 'प्रगत शेतकरी', icon: <StarIcon />, path: '/admin/extra/pragat-shetkari' },
     { text: 'ई-शिक्षण', icon: <SchoolOutlinedIcon />, path: '/admin/extra/e-shikshan' },
@@ -106,7 +145,7 @@ const AdminSidebar = ({ drawerWidth }) => {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box', display: 'flex', flexDirection: 'column' },
       }}
     >
       <Toolbar>
@@ -115,16 +154,21 @@ const AdminSidebar = ({ drawerWidth }) => {
         </Typography>
       </Toolbar>
       <Divider />
-      <Box sx={{ overflow: 'auto' }}>
+      <Box sx={{ overflow: 'auto', p: 0, flex: 1,
+        ['& .MuiListItemButton']: { borderRadius: 1, mx: 1, my: 0.25 },
+        ['& .MuiListItemButton:hover']: { backgroundColor: 'action.hover' },
+        ['& .MuiListItemButton.Mui-selected']: { backgroundColor: 'action.selected' },
+        ['& .MuiListItemIcon-root']: { minWidth: 36 },
+      }}>
         <List>
           <ListItem disablePadding component={Link} to="/admin/panel">
-            <ListItemButton>
+            <ListItemButton selected={isActive('/admin/panel')}>
               <ListItemIcon><DashboardIcon /></ListItemIcon>
               <ListItemText primary="डॅशबोर्ड" />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding component={Link} to="/admin/profile">
-            <ListItemButton>
+            <ListItemButton selected={isActive('/admin/profile')}>
               <ListItemIcon><AccountBalanceIcon /></ListItemIcon>
               <ListItemText primary="ग्रामपंचायत प्रोफाइल" />
             </ListItemButton>
@@ -139,11 +183,30 @@ const AdminSidebar = ({ drawerWidth }) => {
             <List component="div" disablePadding>
               {menuItems.map((item) => (
                  <ListItem key={item.text} disablePadding component={Link} to={item.path}>
-                    <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemButton sx={{ pl: 4 }} selected={isActive(item.path)}>
                       <ListItemIcon>{item.icon}</ListItemIcon>
                       <ListItemText primary={item.text} />
                     </ListItemButton>
                  </ListItem>
+              ))}
+            </List>
+          </Collapse>
+
+          {/* होम पेज Section */}
+          <ListItemButton onClick={() => setOpenHome(!openHome)}>
+            <ListItemIcon><HomeIcon /></ListItemIcon>
+            <ListItemText primary="होम पेज" />
+            {openHome ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openHome} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {homePageItems.map((item) => (
+                <ListItem key={item.path} disablePadding component={Link} to={item.path}>
+                  <ListItemButton sx={{ pl: 4 }} selected={isActive(item.path)}>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItemButton>
+                </ListItem>
               ))}
             </List>
           </Collapse>
@@ -157,25 +220,25 @@ const AdminSidebar = ({ drawerWidth }) => {
           <Collapse in={openNirdeshika} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItem disablePadding component={Link} to="/admin/manage-nirdeshika/janaganana">
-                <ListItemButton sx={{ pl: 4 }}>
+                <ListItemButton sx={{ pl: 4 }} selected={isActive('/admin/manage-nirdeshika/janaganana')}>
                   <ListItemIcon><ListAltIcon /></ListItemIcon>
                   <ListItemText primary="जनगणना" />
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding component={Link} to="/admin/manage-nirdeshika/contacts">
-                <ListItemButton sx={{ pl: 4 }}>
+                <ListItemButton sx={{ pl: 4 }} selected={isActive('/admin/manage-nirdeshika/contacts')}>
                   <ListItemIcon><ContactPhoneIcon /></ListItemIcon>
                   <ListItemText primary="दूरध्वनी क्रमांक" />
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding component={Link} to="/admin/manage-nirdeshika/helpline">
-                <ListItemButton sx={{ pl: 4 }}>
+                <ListItemButton sx={{ pl: 4 }} selected={isActive('/admin/manage-nirdeshika/helpline')}>
                   <ListItemIcon><HelpOutlineIcon /></ListItemIcon>
                   <ListItemText primary="हेल्पलाईन" />
                 </ListItemButton>
               </ListItem>
               <ListItem disablePadding component={Link} to="/admin/manage-nirdeshika/hospitals">
-                <ListItemButton sx={{ pl: 4 }}>
+                <ListItemButton sx={{ pl: 4 }} selected={isActive('/admin/manage-nirdeshika/hospitals')}>
                   <ListItemIcon><LocalHospitalIcon /></ListItemIcon>
                   <ListItemText primary="रुग्णालय" />
                 </ListItemButton>
@@ -193,7 +256,7 @@ const AdminSidebar = ({ drawerWidth }) => {
             <List component="div" disablePadding>
               {programItems.map((item) => (
                 <ListItem key={item.text} disablePadding component={Link} to={item.path}>
-                  <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemButton sx={{ pl: 4 }} selected={isActive(item.path)}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                   </ListItemButton>
@@ -212,7 +275,7 @@ const AdminSidebar = ({ drawerWidth }) => {
             <List component="div" disablePadding>
               {yojanaItems.map((item) => (
                 <ListItem key={item.text} disablePadding component={Link} to={item.path}>
-                  <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemButton sx={{ pl: 4 }} selected={isActive(item.path)}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                   </ListItemButton>
@@ -222,16 +285,16 @@ const AdminSidebar = ({ drawerWidth }) => {
           </Collapse>
 
           {/* इतर Section */}
-          <ListItemButton onClick={() => setOpenNirdeshika(!openNirdeshika)}>
+          <ListItemButton onClick={() => setOpenExtra(!openExtra)}>
             <ListItemIcon><DescriptionIcon /></ListItemIcon>
             <ListItemText primary="इतर" />
-            {openNirdeshika ? <ExpandLess /> : <ExpandMore />}
+            {openExtra ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
-          <Collapse in={openNirdeshika} timeout="auto" unmountOnExit>
+          <Collapse in={openExtra} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {extraItems.map((item) => (
                 <ListItem key={item.text} disablePadding component={Link} to={item.path}>
-                  <ListItemButton sx={{ pl: 4 }}>
+                  <ListItemButton sx={{ pl: 4 }} selected={isActive(item.path)}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
                     <ListItemText primary={item.text} />
                   </ListItemButton>
@@ -242,7 +305,7 @@ const AdminSidebar = ({ drawerWidth }) => {
           
           {/* ✅ ADDED: New link for Complaint Management */}
           <ListItem disablePadding component={Link} to="/admin/manage/complaints">
-            <ListItemButton>
+            <ListItemButton selected={isActive('/admin/manage/complaints')}>
               <ListItemIcon><AssignmentIcon /></ListItemIcon>
               <ListItemText primary="तक्रार व्यवस्थापन" />
             </ListItemButton>
@@ -250,7 +313,8 @@ const AdminSidebar = ({ drawerWidth }) => {
 
         </List>
       </Box>
-      <Box sx={{ position: 'absolute', bottom: 0, width: '100%' }}>
+      <Box sx={{}}
+      >
         <Divider />
         <List>
           <ListItem disablePadding>

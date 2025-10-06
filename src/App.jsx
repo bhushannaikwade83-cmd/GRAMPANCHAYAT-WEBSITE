@@ -99,6 +99,18 @@ import ManageEShikshan from "./admin/pages/extra/ManageEShikshan";
 import ManageBatmya from "./admin/pages/extra/ManageBatmya";
 import ManageSampark from "./admin/pages/extra/ManageSampark";
 
+// Admin Pages: Home management
+import ManageHomeNavbar from "./admin/pages/home/ManageHomeNavbar";
+import ManageHomeWelcome from "./admin/pages/home/ManageHomeWelcome";
+import ManageHomePhotos from "./admin/pages/home/ManageHomePhotos";
+import ManageHomeRajyaGeet from "./admin/pages/home/ManageHomeRajyaGeet";
+import ManageHomeMessages from "./admin/pages/home/ManageHomeMessages";
+import ManageHomeMembers from "./admin/pages/home/ManageHomeMembers";
+import ManageHomeInfo from "./admin/pages/home/ManageHomeInfo";
+import ManageHomeDigitalSlogans from "./admin/pages/home/ManageHomeDigitalSlogans";
+import ManageHomeGovLogos from "./admin/pages/home/ManageHomeGovLogos";
+import ManageHomeFooter from "./admin/pages/home/ManageHomeFooter";
+
 
 // This component wraps all the public-facing pages with Navbar and Footer
 const MainLayout = ({ isMobile, navbarHeight }) => (
@@ -196,6 +208,18 @@ function App() {
         <Route path="manage/eseva" element={<ManageESeva />} />
         <Route path="manage/tourism" element={<ManageTourism />} />
         <Route path="manage/complaints" element={<ManageComplaints />} />
+
+        {/* होम पेज व्यवस्थापन */}
+        <Route path="home/navbar" element={<ManageHomeNavbar />} />
+        <Route path="home/welcome" element={<ManageHomeWelcome />} />
+        <Route path="home/photos" element={<ManageHomePhotos />} />
+        <Route path="home/rajya-geet" element={<ManageHomeRajyaGeet />} />
+        <Route path="home/messages" element={<ManageHomeMessages />} />
+        <Route path="home/members" element={<ManageHomeMembers />} />
+        <Route path="home/info" element={<ManageHomeInfo />} />
+        <Route path="home/digital-slogans" element={<ManageHomeDigitalSlogans />} />
+        <Route path="home/gov-logos" element={<ManageHomeGovLogos />} />
+        <Route path="home/footer" element={<ManageHomeFooter />} />
 
         {/* निर्देशिका */}
         <Route path="manage-nirdeshika/janaganana" element={<Janaganana />} />

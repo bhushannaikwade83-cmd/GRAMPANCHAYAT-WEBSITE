@@ -12,7 +12,7 @@ import {
   CircularProgress,
   Chip,
 } from '@mui/material';
-import { PhotoCamera, Save, Edit } from '@mui/icons-material';
+import { PhotoCamera, Save, Edit, Delete } from '@mui/icons-material';
 
 // Firebase imports
 import { db } from '../../../firebase';
@@ -24,13 +24,15 @@ import CloudinaryUploader from '../../components/CloudinaryUploader';
 const ManageInfo = () => {
   const [formData, setFormData] = useState({
     details: '',
-    photo: '',
+    photos: [], // new schema
+    photo: '', // legacy (kept for backward compatibility when saving)
   });
   const [gpName, setGpName] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'success' });
+  const [uploaderKey, setUploaderKey] = useState(0); // force remount to reset uploader after each add
 
   // Fetch existing data for both profile (for the name) and mainInfo
   useEffect(() => {
@@ -50,9 +52,17 @@ const ManageInfo = () => {
         const infoDocRef = doc(db, 'grampanchayat', 'mainInfo');
         const infoSnap = await getDoc(infoDocRef);
         if (infoSnap.exists()) {
-          // Make sure not to overwrite with a non-existent title
-          const { title, ...restData } = infoSnap.data();
-          setFormData(restData);
+          const data = infoSnap.data();
+          const { title, ...restData } = data;
+          // migrate legacy 'photo' to new 'photos' array if needed
+          const photos = Array.isArray(restData.photos)
+            ? restData.photos
+            : (restData.photo ? [restData.photo] : []);
+          setFormData({
+            details: restData.details || '',
+            photos,
+            photo: restData.photo || '',
+          });
         }
       } catch (error) {
         console.error("Error fetching data: ", error);
@@ -69,9 +79,23 @@ const ManageInfo = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhotoUpload = (imageUrl) => {
-    setFormData((prev) => ({ ...prev, photo: imageUrl }));
+  const handleAddPhoto = (imageUrl) => {
+    if (!imageUrl) {
+      // treated as remove/cancel by uploader
+      return;
+    }
+    setFormData((prev) => ({ ...prev, photos: [...(prev.photos || []), imageUrl] }));
     setNotification({ open: true, message: 'फोटो यशस्वीरित्या अपलोड झाला!', severity: 'success' });
+    // reset uploader instance so it becomes ready for next upload
+    setUploaderKey((k) => k + 1);
+  };
+
+  const handleRemovePhotoAt = (index) => {
+    setFormData((prev) => {
+      const next = [...(prev.photos || [])];
+      next.splice(index, 1);
+      return { ...prev, photos: next };
+    });
   };
 
   const handleSubmit = async () => {
@@ -83,9 +107,12 @@ const ManageInfo = () => {
     try {
       const docRef = doc(db, 'grampanchayat', 'mainInfo');
       // Ensure 'title' is not part of the object being saved here
+      const photosArr = Array.isArray(formData.photos) ? formData.photos : [];
       const dataToSave = {
         details: formData.details,
-        photo: formData.photo,
+        photos: photosArr,
+        // keep legacy 'photo' synced to first photo if present for backward compatibility
+        photo: photosArr[0] || formData.photo || '',
       };
       await setDoc(docRef, dataToSave, { merge: true });
       setNotification({ open: true, message: 'माहिती यशस्वीरित्या सेव्ह झाली!', severity: 'success' });
@@ -142,28 +169,50 @@ const ManageInfo = () => {
 
           <Grid item xs={12} md={5}>
             <Typography variant="h6" gutterBottom>
-              फोटो
+              फोटो गॅलरी
             </Typography>
-            {isEditing ? (
-              <CloudinaryUploader
-                folder="grampanchayat_images/info"
-                onUpload={handlePhotoUpload}
-              />
-            ) : (
-              <Box
-                sx={{
-                  border: '2px solid #eee',
+            {/* Gallery */}
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 2 }}>
+              {(formData.photos || []).length === 0 && !isEditing && (
+                <Box sx={{
+                  border: '2px dashed #eee',
                   borderRadius: 2,
-                  height: 300,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundImage: formData.photo ? `url(${formData.photo})` : 'none',
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
-                {!formData.photo && <Typography color="text.secondary">फोटो येथे दिसेल</Typography>}
+                  p: 3,
+                  textAlign: 'center',
+                  color: 'text.secondary'
+                }}>
+                  <Typography color="text.secondary">फोटो उपलब्ध नाहीत</Typography>
+                </Box>
+              )}
+              {(formData.photos || []).map((url, idx) => (
+                <Box key={url + idx} sx={{ position: 'relative', borderRadius: 2, overflow: 'hidden', border: '1px solid #eee' }}>
+                  <Box component="img" src={url} alt={`info-${idx}`} sx={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }} />
+                  {isEditing && (
+                    <Button
+                      size="small"
+                      color="error"
+                      variant="contained"
+                      startIcon={<Delete />}
+                      onClick={() => handleRemovePhotoAt(idx)}
+                      sx={{ position: 'absolute', top: 8, right: 8, borderRadius: 2, boxShadow: 'none' }}
+                    >
+                      हटवा
+                    </Button>
+                  )}
+                </Box>
+              ))}
+            </Box>
+
+            {/* Add uploader when editing */}
+            {isEditing && (
+              <Box sx={{ mt: 2 }}>
+                <CloudinaryUploader
+                  key={uploaderKey}
+                  title="नवीन फोटो जोडा"
+                  currentImageUrl={null}
+                  onUploadSuccess={(url) => handleAddPhoto(url)}
+                  onUploadError={(m) => setNotification({ open: true, message: m, severity: 'error' })}
+                />
               </Box>
             )}
           </Grid>
