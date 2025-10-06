@@ -33,6 +33,10 @@ import WaterIcon from '@mui/icons-material/Water';
 import WaterDropIcon from '@mui/icons-material/WaterDrop';
 import WorkIcon from '@mui/icons-material/Work';
 import EventIcon from '@mui/icons-material/Event';
+import StarIcon from '@mui/icons-material/Star';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import ArticleIcon from '@mui/icons-material/Article';
+import ContactMailIcon from '@mui/icons-material/ContactMail';
 
 const AdminSidebar = ({ drawerWidth }) => {
   const navigate = useNavigate();
@@ -87,6 +91,13 @@ const AdminSidebar = ({ drawerWidth }) => {
   const yojanaItems = [
     { text: 'राज्य सरकार योजना', icon: <AssignmentIcon />, path: '/admin/yojana/state' },
     { text: 'केंद्र सरकार योजना', icon: <AssignmentIcon />, path: '/admin/yojana/central' },
+  ];
+
+  const extraItems = [
+    { text: 'प्रगत शेतकरी', icon: <StarIcon />, path: '/admin/extra/pragat-shetkari' },
+    { text: 'ई-शिक्षण', icon: <SchoolOutlinedIcon />, path: '/admin/extra/e-shikshan' },
+    { text: 'बातम्या', icon: <ArticleIcon />, path: '/admin/extra/batmya' },
+    { text: 'संपर्क', icon: <ContactMailIcon />, path: '/admin/extra/sampark' },
   ];
 
   return (
@@ -200,6 +211,25 @@ const AdminSidebar = ({ drawerWidth }) => {
           <Collapse in={openYojana} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {yojanaItems.map((item) => (
+                <ListItem key={item.text} disablePadding component={Link} to={item.path}>
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+
+          {/* इतर Section */}
+          <ListItemButton onClick={() => setOpenNirdeshika(!openNirdeshika)}>
+            <ListItemIcon><DescriptionIcon /></ListItemIcon>
+            <ListItemText primary="इतर" />
+            {openNirdeshika ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openNirdeshika} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {extraItems.map((item) => (
                 <ListItem key={item.text} disablePadding component={Link} to={item.path}>
                   <ListItemButton sx={{ pl: 4 }}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
