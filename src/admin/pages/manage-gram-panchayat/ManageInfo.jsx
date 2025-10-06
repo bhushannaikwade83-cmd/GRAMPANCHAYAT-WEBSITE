@@ -6,7 +6,6 @@ import {
   Button,
   Paper,
   Grid,
-  LinearProgress,
   Snackbar,
   Alert,
   CircularProgress,
@@ -17,7 +16,7 @@ import {
   CardContent,
   CardActions,
 } from '@mui/material';
-import { PhotoCamera, Save, Edit, Delete, ChevronLeft, ChevronRight, Add } from '@mui/icons-material';
+import { Save, Edit, Delete, ChevronLeft, ChevronRight, Add } from '@mui/icons-material';
 
 // Firebase imports
 import { db } from '../../../firebase';
@@ -29,7 +28,7 @@ import CloudinaryUploader from '../../components/CloudinaryUploader';
 const ManageInfo = () => {
   const [formData, setFormData] = useState({
     details: '',
-    photos: [], // Changed from 'photo' to 'photos' array
+    photos: [],
   });
   const [gpName, setGpName] = useState('');
   const [isEditing, setIsEditing] = useState(false);
@@ -40,23 +39,21 @@ const ManageInfo = () => {
   const [photoName, setPhotoName] = useState('');
   const [showUploader, setShowUploader] = useState(false);
 
-  // Auto slideshow effect
+  // Auto slideshow
   useEffect(() => {
-    if (formData.photos && formData.photos.length > 1 && !isEditing) {
+    if (formData.photos.length > 1 && !isEditing) {
       const interval = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % formData.photos.length);
-      }, 3000); // Change slide every 3 seconds
-      
+      }, 3000);
       return () => clearInterval(interval);
     }
   }, [formData.photos, isEditing]);
 
-  // Fetch existing data
+  // Fetch data from Firebase
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch Gram Panchayat Name
         const profileDocRef = doc(db, 'grampanchayat', 'profile');
         const profileSnap = await getDoc(profileDocRef);
         if (profileSnap.exists() && profileSnap.data().title) {
@@ -65,27 +62,25 @@ const ManageInfo = () => {
           setGpName('N/A');
         }
 
-        // Fetch Main Info Details and Photos
         const infoDocRef = doc(db, 'grampanchayat', 'mainInfo');
         const infoSnap = await getDoc(infoDocRef);
         if (infoSnap.exists()) {
           const data = infoSnap.data();
-          // Handle backward compatibility - convert old 'photo' to 'photos' array
           if (data.photo && !data.photos) {
             setFormData({
               details: data.details || '',
-              photos: [{ url: data.photo, name: 'Photo 1' }]
+              photos: [{ url: data.photo, name: 'Photo 1' }],
             });
           } else {
             setFormData({
               details: data.details || '',
-              photos: data.photos || []
+              photos: data.photos || [],
             });
           }
         }
       } catch (error) {
-        console.error("Error fetching data: ", error);
-        setNotification({ open: true, message: 'Data could not be loaded!', severity: 'error' });
+        console.error('Error fetching data:', error);
+        setNotification({ open: true, message: 'डेटा लोड करण्यात त्रुटी आली!', severity: 'error' });
       } finally {
         setLoading(false);
       }
@@ -93,23 +88,23 @@ const ManageInfo = () => {
     fetchData();
   }, []);
 
+  // Update input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ Add new photo
   const handlePhotoUpload = (imageUrl) => {
     const newPhoto = {
       url: imageUrl,
-      name: photoName || `Photo ${formData.photos.length + 1}`,
-      uploadedAt: new Date().toISOString()
+      name: photoName || `फोटो ${formData.photos.length + 1}`,
+      uploadedAt: new Date().toISOString(),
     };
-    
     setFormData((prev) => ({
       ...prev,
-      photos: [...prev.photos, newPhoto]
+      photos: [...prev.photos, newPhoto],
     }));
-    
     setPhotoName('');
     setShowUploader(false);
     setNotification({ open: true, message: 'फोटो यशस्वीरित्या अपलोड झाला!', severity: 'success' });
@@ -118,53 +113,41 @@ const ManageInfo = () => {
   const handleDeletePhoto = (index) => {
     setFormData((prev) => ({
       ...prev,
-      photos: prev.photos.filter((_, i) => i !== index)
+      photos: prev.photos.filter((_, i) => i !== index),
     }));
-    setNotification({ open: true, message: 'फोटो हटवला गेला!', severity: 'success' });
+    setNotification({ open: true, message: 'फोटो हटवला गेला!', severity: 'info' });
   };
 
   const handleUpdatePhotoName = (index, newName) => {
     setFormData((prev) => ({
       ...prev,
-      photos: prev.photos.map((photo, i) => 
+      photos: prev.photos.map((photo, i) =>
         i === index ? { ...photo, name: newName } : photo
-      )
+      ),
     }));
   };
 
   const handleSubmit = async () => {
     if (!formData.details) {
-      setNotification({ open: true, message: 'कृपया संपूर्ण माहिती भरा.', severity: 'warning' });
+      setNotification({ open: true, message: 'कृपया माहिती भरा.', severity: 'warning' });
       return;
     }
     setSaving(true);
     try {
       const docRef = doc(db, 'grampanchayat', 'mainInfo');
-      const dataToSave = {
-        details: formData.details,
-        photos: formData.photos,
-      };
-      await setDoc(docRef, dataToSave, { merge: true });
-      setNotification({ open: true, message: 'माहिती यशस्वीरित्या सेव्ह झाली!', severity: 'success' });
+      await setDoc(docRef, formData, { merge: true });
+      setNotification({ open: true, message: 'माहिती सेव्ह झाली!', severity: 'success' });
       setIsEditing(false);
     } catch (error) {
-      setNotification({ open: true, message: 'माहिती सेव्ह करण्यात अयशस्वी!', severity: 'error' });
+      setNotification({ open: true, message: 'सेव्ह करण्यात त्रुटी!', severity: 'error' });
     } finally {
       setSaving(false);
     }
   };
 
-  const handleCloseNotification = () => {
-    setNotification({ ...notification, open: false });
-  };
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % formData.photos.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + formData.photos.length) % formData.photos.length);
-  };
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % formData.photos.length);
+  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + formData.photos.length) % formData.photos.length);
+  const handleCloseNotification = () => setNotification({ ...notification, open: false });
 
   if (loading) {
     return (
@@ -181,14 +164,15 @@ const ManageInfo = () => {
           <Typography variant="h4">माहिती व्यवस्थापन</Typography>
           {!isEditing && (
             <Button variant="contained" startIcon={<Edit />} onClick={() => setIsEditing(true)}>
-              Edit
+              संपादन करा
             </Button>
           )}
         </Box>
-        
+
         <Chip label={`ग्रामपंचायत: ${gpName}`} color="primary" sx={{ mb: 3 }} />
 
         <Grid container spacing={4}>
+          {/* Left side - Text info */}
           <Grid item xs={12} md={7}>
             <TextField
               fullWidth
@@ -203,12 +187,13 @@ const ManageInfo = () => {
             />
           </Grid>
 
+          {/* Right side - Photos */}
           <Grid item xs={12} md={5}>
             <Typography variant="h6" gutterBottom>
               फोटो गॅलरी
             </Typography>
-            
-            {/* Slideshow View (when not editing) */}
+
+            {/* View Mode */}
             {!isEditing && formData.photos.length > 0 && (
               <Box sx={{ position: 'relative', height: 350 }}>
                 <Box
@@ -216,21 +201,18 @@ const ManageInfo = () => {
                     border: '2px solid #eee',
                     borderRadius: 2,
                     height: '100%',
-                    position: 'relative',
                     overflow: 'hidden',
                     backgroundImage: `url(${formData.photos[currentSlide]?.url})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                   }}
                 >
-                  {/* Photo Name Overlay */}
                   <Box
                     sx={{
                       position: 'absolute',
                       bottom: 0,
-                      left: 0,
-                      right: 0,
-                      background: 'linear-gradient(transparent, rgba(0,0,0,0.8))',
+                      width: '100%',
+                      background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
                       color: 'white',
                       p: 2,
                     }}
@@ -241,71 +223,27 @@ const ManageInfo = () => {
                     </Typography>
                   </Box>
 
-                  {/* Navigation Arrows */}
                   {formData.photos.length > 1 && (
                     <>
                       <IconButton
                         onClick={prevSlide}
-                        sx={{
-                          position: 'absolute',
-                          left: 10,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          bgcolor: 'rgba(255,255,255,0.8)',
-                          '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
-                        }}
+                        sx={{ position: 'absolute', left: 10, top: '50%', bgcolor: 'white', '&:hover': { bgcolor: '#f5f5f5' } }}
                       >
                         <ChevronLeft />
                       </IconButton>
                       <IconButton
                         onClick={nextSlide}
-                        sx={{
-                          position: 'absolute',
-                          right: 10,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          bgcolor: 'rgba(255,255,255,0.8)',
-                          '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
-                        }}
+                        sx={{ position: 'absolute', right: 10, top: '50%', bgcolor: 'white', '&:hover': { bgcolor: '#f5f5f5' } }}
                       >
                         <ChevronRight />
                       </IconButton>
                     </>
                   )}
-
-                  {/* Slide Indicators */}
-                  {formData.photos.length > 1 && (
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        bottom: 60,
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        display: 'flex',
-                        gap: 1,
-                      }}
-                    >
-                      {formData.photos.map((_, index) => (
-                        <Box
-                          key={index}
-                          onClick={() => setCurrentSlide(index)}
-                          sx={{
-                            width: 10,
-                            height: 10,
-                            borderRadius: '50%',
-                            bgcolor: currentSlide === index ? 'white' : 'rgba(255,255,255,0.5)',
-                            cursor: 'pointer',
-                            transition: 'all 0.3s',
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  )}
                 </Box>
               </Box>
             )}
 
-            {/* No Photos Message */}
+            {/* No photos */}
             {!isEditing && formData.photos.length === 0 && (
               <Box
                 sx={{
@@ -321,19 +259,14 @@ const ManageInfo = () => {
               </Box>
             )}
 
-            {/* Edit Mode - Photo Grid */}
+            {/* Edit Mode */}
             {isEditing && (
               <Box>
                 <Grid container spacing={2}>
                   {formData.photos.map((photo, index) => (
                     <Grid item xs={12} sm={6} key={index}>
                       <Card>
-                        <CardMedia
-                          component="img"
-                          height="140"
-                          image={photo.url}
-                          alt={photo.name}
-                        />
+                        <CardMedia component="img" height="140" image={photo.url} alt={photo.name} />
                         <CardContent sx={{ pb: 1 }}>
                           <TextField
                             fullWidth
@@ -344,11 +277,7 @@ const ManageInfo = () => {
                           />
                         </CardContent>
                         <CardActions>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDeletePhoto(index)}
-                          >
+                          <IconButton color="error" onClick={() => handleDeletePhoto(index)}>
                             <Delete />
                           </IconButton>
                         </CardActions>
@@ -357,7 +286,6 @@ const ManageInfo = () => {
                   ))}
                 </Grid>
 
-                {/* Add New Photo Button */}
                 <Button
                   fullWidth
                   variant="outlined"
@@ -368,7 +296,6 @@ const ManageInfo = () => {
                   नवीन फोटो जोडा
                 </Button>
 
-                {/* Photo Uploader */}
                 {showUploader && (
                   <Box sx={{ mt: 2, p: 2, border: '1px solid #eee', borderRadius: 2 }}>
                     <TextField
@@ -381,6 +308,7 @@ const ManageInfo = () => {
                       placeholder="उदा. ग्रामपंचायत इमारत"
                     />
                     <CloudinaryUploader
+                      key={formData.photos.length} // ✅ fixes overwrite issue
                       folder="grampanchayat_images/info"
                       onUpload={handlePhotoUpload}
                     />
@@ -390,7 +318,7 @@ const ManageInfo = () => {
             )}
           </Grid>
         </Grid>
-        
+
         {isEditing && (
           <Box sx={{ mt: 4, display: 'flex', justifyContent: 'flex-end' }}>
             <Button
@@ -406,7 +334,7 @@ const ManageInfo = () => {
           </Box>
         )}
       </Paper>
-      
+
       <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification}>
         <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%' }}>
           {notification.message}
