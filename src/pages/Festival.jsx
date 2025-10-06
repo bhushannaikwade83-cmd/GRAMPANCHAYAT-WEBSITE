@@ -28,7 +28,7 @@ const Festival = () => {
   return (
     <Box sx={{ width: '100%', py: 5, backgroundColor: '#f7f7f7' }}>
       <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
-        <Typography variant="h4" align="center" fontWeight={700} gutterBottom>सण/उत्सव</Typography>
+        <Typography variant="h4" align="center" fontWeight={700} gutterBottom>कार्यक्रम</Typography>
 
         {loading && (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 6, gap: 2 }}>

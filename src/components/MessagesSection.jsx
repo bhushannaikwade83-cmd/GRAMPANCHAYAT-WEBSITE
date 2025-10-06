@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Tabs,
@@ -7,13 +7,42 @@ import {
   Link as MuiLink,
   Paper,
 } from "@mui/material";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const MessagesSection = () => {
   const [value, setValue] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState({ newMessages: [], yojana: [], tenders: [] });
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const ref = doc(db, 'home', 'messages');
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          const d = snap.data();
+          setData({
+            newMessages: Array.isArray(d?.newMessages) ? d.newMessages : [],
+            yojana: Array.isArray(d?.yojana) ? d.yojana : [],
+            tenders: Array.isArray(d?.tenders) ? d.tenders : [],
+          });
+        } else {
+          setData({ newMessages: [], yojana: [], tenders: [] });
+        }
+      } catch (e) {
+        console.error('Error fetching messages', e);
+        setData({ newMessages: [], yojana: [], tenders: [] });
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
 
   return (
     <Box
@@ -43,7 +72,7 @@ const MessagesSection = () => {
           }}
         >
           <Tab label="नवीन संदेश" />
-          <Tab label="कार्यक्रम" />
+          <Tab label="योजना" />
           <Tab label="निविदा" />
         </Tabs>
       </Paper>
@@ -56,65 +85,53 @@ const MessagesSection = () => {
           overflowY: "auto", // scroll if content is too much
         }}
       >
-        {value === 0 && (
+        {loading ? (
+          <Typography variant="body2">लोड होत आहे...</Typography>
+        ) : (
           <>
-            <Typography sx={{ mb: 1 }}>
-              योजना नाव –{" "}
-              <MuiLink href="#" color="primary">
-                लाभार्थी यादी १
-              </MuiLink>
-            </Typography>
-            <Typography sx={{ mb: 1 }}>
-              योजना नाव –{" "}
-              <MuiLink href="#" color="primary">
-                लाभार्थी यादी २
-              </MuiLink>
-            </Typography>
-            <Typography sx={{ mb: 1 }}>
-              योजना नाव –{" "}
-              <MuiLink href="#" color="primary">
-                लाभार्थी यादी ३
-              </MuiLink>
-            </Typography>
-            <Typography sx={{ mb: 1 }}>
-              योजना नाव –{" "}
-              <MuiLink href="#" color="primary">
-                लाभार्थी यादी ४
-              </MuiLink>
-            </Typography>
-            <MuiLink href="#" color="primary" sx={{ fontWeight: "bold" }}>
-              ग्राम सभेचे निर्णय
-            </MuiLink>
-          </>
-        )}
+            {value === 0 && (
+              data.newMessages.length ? (
+                data.newMessages.map((m, idx) => (
+                  <Typography key={idx} sx={{ mb: 1 }}>
+                    {m.title} –{" "}
+                    <MuiLink href={m.imageUrl} color="primary" target="_blank" rel="noopener">
+                      इमेज URL
+                    </MuiLink>
+                  </Typography>
+                ))
+              ) : (
+                <Typography variant="body2">डेटा उपलब्ध नाही</Typography>
+              )
+            )}
 
-        {value === 1 && (
-          <>
-            <Typography sx={{ mb: 1 }}>
-              <MuiLink href="#" color="primary">
-                कार्यक्रम-१
-              </MuiLink>
-            </Typography>
-            <Typography sx={{ mb: 1 }}>
-              <MuiLink href="#" color="primary">
-                कार्यक्रम-२
-              </MuiLink>
-            </Typography>
-            <Typography sx={{ mb: 1 }}>
-              <MuiLink href="#" color="primary">
-                कार्यक्रम-३
-              </MuiLink>
-            </Typography>
-            <Typography sx={{ mb: 1 }}>
-              <MuiLink href="#" color="primary">
-                कार्यक्रम-४
-              </MuiLink>
-            </Typography>
-          </>
-        )}
+            {value === 1 && (
+              data.yojana.length ? (
+                data.yojana.map((m, idx) => (
+                  <Typography key={idx} sx={{ mb: 1 }}>
+                    <MuiLink href={m.link} color="primary" target="_blank" rel="noopener">
+                      {m.title}
+                    </MuiLink>
+                  </Typography>
+                ))
+              ) : (
+                <Typography variant="body2">डेटा उपलब्ध नाही</Typography>
+              )
+            )}
 
-        {value === 2 && (
-          <Typography> इथे निविदांची माहिती दिसेल...</Typography>
+            {value === 2 && (
+              data.tenders.length ? (
+                data.tenders.map((m, idx) => (
+                  <Typography key={idx} sx={{ mb: 1 }}>
+                    <MuiLink href={m.link} color="primary" target="_blank" rel="noopener">
+                      {m.title}
+                    </MuiLink>
+                  </Typography>
+                ))
+              ) : (
+                <Typography variant="body2">डेटा उपलब्ध नाही</Typography>
+              )
+            )}
+          </>
         )}
       </Box>
     </Box>
