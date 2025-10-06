@@ -39,6 +39,7 @@ const AdminSidebar = ({ drawerWidth }) => {
   const [openGrampanchayat, setOpenGrampanchayat] = useState(true);
   const [openNirdeshika, setOpenNirdeshika] = useState(true);
   const [openPrograms, setOpenPrograms] = useState(true);
+  const [openYojana, setOpenYojana] = useState(true);
 
   const handleGrampanchayatClick = () => {
     setOpenGrampanchayat(!openGrampanchayat);
@@ -81,6 +82,11 @@ const AdminSidebar = ({ drawerWidth }) => {
     { text: 'कचऱ्याचे नियोजन', icon: <RecyclingIcon />, path: '/admin/program/kachryache-niyojan' },
     { text: 'बायोगॅस निर्मिती', icon: <AgricultureIcon />, path: '/admin/program/biogas-nirmiti' },
     { text: 'सेंद्रिय खत निर्मिती', icon: <AgricultureIcon />, path: '/admin/program/sendriya-khat' },
+  ];
+
+  const yojanaItems = [
+    { text: 'राज्य सरकार योजना', icon: <AssignmentIcon />, path: '/admin/yojana/state' },
+    { text: 'केंद्र सरकार योजना', icon: <AssignmentIcon />, path: '/admin/yojana/central' },
   ];
 
   return (
@@ -175,6 +181,25 @@ const AdminSidebar = ({ drawerWidth }) => {
           <Collapse in={openPrograms} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               {programItems.map((item) => (
+                <ListItem key={item.text} disablePadding component={Link} to={item.path}>
+                  <ListItemButton sx={{ pl: 4 }}>
+                    <ListItemIcon>{item.icon}</ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
+            </List>
+          </Collapse>
+
+          {/* योजना Section */}
+          <ListItemButton onClick={() => setOpenYojana(!openYojana)}>
+            <ListItemIcon><AssignmentIcon /></ListItemIcon>
+            <ListItemText primary="योजना" />
+            {openYojana ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={openYojana} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              {yojanaItems.map((item) => (
                 <ListItem key={item.text} disablePadding component={Link} to={item.path}>
                   <ListItemButton sx={{ pl: 4 }}>
                     <ListItemIcon>{item.icon}</ListItemIcon>
