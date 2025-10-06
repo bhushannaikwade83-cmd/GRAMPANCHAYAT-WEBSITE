@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const Welcome = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [statsVisible, setStatsVisible] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [hoveredStat, setHoveredStat] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [fetchedStats, setFetchedStats] = useState(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -24,12 +28,30 @@ const Welcome = () => {
     });
   };
 
-  const stats = [
-    { icon: "👥", text: "1200+ नागरिक", detail: "सक्रिय नागरिक" },
-    { icon: "🏠", text: "250+ कुटुंबे", detail: "नोंदणीकृत कुटुंबे" },
-    { icon: "🌾", text: "शेती विकास", detail: "आधुनिक तंत्रज्ञान" },
-    { icon: "💡", text: "डिजिटल सेवा", detail: "24/7 ऑनलाइन" }
-  ];
+  useEffect(() => {
+    const loadStats = async () => {
+      try {
+        const ref = doc(db, 'home', 'welcome');
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          const data = snap.data();
+          if (Array.isArray(data?.stats)) {
+            setFetchedStats(data.stats);
+          } else {
+            setFetchedStats([]);
+          }
+        } else {
+          setFetchedStats([]);
+        }
+      } catch (e) {
+        console.error('Error fetching welcome stats', e);
+        setFetchedStats([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadStats();
+  }, []);
 
   return (
     <section 
@@ -121,64 +143,70 @@ const Welcome = () => {
         </p>
 
         {/* Interactive Quick Stats */}
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: isMobile ? '15px' : '30px',
-          marginTop: '30px',
-          flexWrap: 'wrap'
-        }}>
-          {stats.map((item, i) => (
-            <div 
-              key={i}
-              onMouseEnter={() => setHoveredStat(i)}
-              onMouseLeave={() => setHoveredStat(null)}
-              style={{
-                background: hoveredStat === i 
-                  ? 'rgba(255,255,255,0.3)' 
-                  : 'rgba(255,255,255,0.2)',
-                padding: isMobile ? '12px 18px' : '15px 25px',
-                borderRadius: '25px',
-                fontSize: isMobile ? '13px' : '14px',
-                fontWeight: '600',
-                backdropFilter: 'blur(10px)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '5px',
-                cursor: 'pointer',
-                transform: hoveredStat === i ? 'translateY(-5px) scale(1.05)' : 'translateY(0)',
-                transition: 'all 0.3s ease',
-                opacity: statsVisible ? 1 : 0,
-                animation: `fadeInUp 0.5s ease-out ${0.6 + i * 0.1}s backwards`,
-                boxShadow: hoveredStat === i 
-                  ? '0 8px 20px rgba(0,0,0,0.2)' 
-                  : '0 2px 8px rgba(0,0,0,0.1)',
-                minWidth: isMobile ? '120px' : '140px'
-              }}
-            >
-              <span style={{ 
-                fontSize: isMobile ? '24px' : '28px',
-                transform: hoveredStat === i ? 'scale(1.2) rotate(10deg)' : 'scale(1)',
-                transition: 'transform 0.3s ease',
-                display: 'inline-block'
-              }}>
-                {item.icon}
-              </span>
-              <span>{item.text}</span>
-              <span style={{
-                fontSize: '11px',
-                opacity: hoveredStat === i ? 1 : 0,
-                maxHeight: hoveredStat === i ? '20px' : '0',
-                overflow: 'hidden',
-                transition: 'all 0.3s ease',
-                color: '#f0f0f0'
-              }}>
-                {item.detail}
-              </span>
-            </div>
-          ))}
-        </div>
+        {loading ? (
+          <p style={{ marginTop: '24px' }}>लोड होत आहे...</p>
+        ) : (fetchedStats && fetchedStats.length > 0 ? (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: isMobile ? '15px' : '30px',
+            marginTop: '30px',
+            flexWrap: 'wrap'
+          }}>
+            {fetchedStats.map((item, i) => (
+              <div 
+                key={i}
+                onMouseEnter={() => setHoveredStat(i)}
+                onMouseLeave={() => setHoveredStat(null)}
+                style={{
+                  background: hoveredStat === i 
+                    ? 'rgba(255,255,255,0.3)' 
+                    : 'rgba(255,255,255,0.2)',
+                  padding: isMobile ? '12px 18px' : '15px 25px',
+                  borderRadius: '25px',
+                  fontSize: isMobile ? '13px' : '14px',
+                  fontWeight: '600',
+                  backdropFilter: 'blur(10px)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '5px',
+                  cursor: 'pointer',
+                  transform: hoveredStat === i ? 'translateY(-5px) scale(1.05)' : 'translateY(0)',
+                  transition: 'all 0.3s ease',
+                  opacity: statsVisible ? 1 : 0,
+                  animation: `fadeInUp 0.5s ease-out ${0.6 + i * 0.1}s backwards`,
+                  boxShadow: hoveredStat === i 
+                    ? '0 8px 20px rgba(0,0,0,0.2)' 
+                    : '0 2px 8px rgba(0,0,0,0.1)',
+                  minWidth: isMobile ? '120px' : '140px'
+                }}
+              >
+                <span style={{ 
+                  fontSize: isMobile ? '24px' : '28px',
+                  transform: hoveredStat === i ? 'scale(1.2) rotate(10deg)' : 'scale(1)',
+                  transition: 'transform 0.3s ease',
+                  display: 'inline-block'
+                }}>
+                  {item.icon}
+                </span>
+                <span>{item.text}</span>
+                <span style={{
+                  fontSize: '11px',
+                  opacity: hoveredStat === i ? 1 : 0,
+                  maxHeight: hoveredStat === i ? '20px' : '0',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  color: '#f0f0f0'
+                }}>
+                  {item.detail}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p style={{ marginTop: '24px' }}>डेटा उपलब्ध नाही</p>
+        ))}
       </div>
 
       <style>{`
