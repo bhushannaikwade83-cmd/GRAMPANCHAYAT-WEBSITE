@@ -88,6 +88,8 @@ import ManageAarogyaShibir from "./admin/pages/program/ManageAarogyaShibir";
 import ManageKachryacheNiyojan from "./admin/pages/program/ManageKachryacheNiyojan";
 import ManageBiogasNirmiti from "./admin/pages/program/ManageBiogasNirmiti";
 import ManageSendriyaKhat from "./admin/pages/program/ManageSendriyaKhat";
+import ManageStateYojana from "./admin/pages/yojana/ManageStateYojana";
+import ManageCentralYojana from "./admin/pages/yojana/ManageCentralYojana";
 
 
 // This component wraps all the public-facing pages with Navbar and Footer
@@ -204,6 +206,9 @@ function App() {
         <Route path="program/kachryache-niyojan" element={<ManageKachryacheNiyojan />} />
         <Route path="program/biogas-nirmiti" element={<ManageBiogasNirmiti />} />
         <Route path="program/sendriya-khat" element={<ManageSendriyaKhat />} />
+        {/* योजना व्यवस्थापन */}
+        <Route path="yojana/state" element={<ManageStateYojana />} />
+        <Route path="yojana/central" element={<ManageCentralYojana />} />
       </Route>
 
       {/* Main Public Website Routes */}
