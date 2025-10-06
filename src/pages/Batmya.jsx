@@ -30,9 +30,9 @@ function Batmya() {
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
           {news.map((n) => (
-            <div key={n.id} style={{ border: "1px solid #e0e0e0", borderRadius: 8, overflow: "hidden", background: "#fff" }}>
+            <div key={n.id} style={{ border: "1px solidrgba(224, 224, 224, 0.96)", borderRadius: 8, overflow: "hidden", background: "#fff" }}>
               {n.imageUrl ? (
-                <img src={n.imageUrl} alt={n.title} style={{ width: "100%", height: 180, objectFit: "cover" }} />
+                <img src={n.imageUrl} alt={n.title} style={{ width: "99%", height: 180, objectFit: "cover" }} />
               ) : null}
               <div style={{ padding: 16 }}>
                 <div style={{ fontSize: 12, color: "#666", marginBottom: 6 }}>{n.date}</div>
