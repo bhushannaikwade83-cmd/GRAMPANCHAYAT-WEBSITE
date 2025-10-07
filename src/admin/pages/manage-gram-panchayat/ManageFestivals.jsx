@@ -94,7 +94,7 @@ const ManageFestivals = () => {
     <Box sx={{ p: 4 }}>
       <Paper elevation={3} sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h4">सण/उत्सव व्यवस्थापन</Typography>
+          <Typography variant="h4">कार्यक्रम व्यवस्थापन</Typography>
           <Button variant="contained" startIcon={<Add />} onClick={() => handleOpen()}>नवीन</Button>
         </Box>
 

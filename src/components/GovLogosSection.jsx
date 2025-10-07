@@ -1,58 +1,67 @@
 import React, { useState, useEffect } from "react";
-import { Box, IconButton, Paper, Typography } from "@mui/material";
+import { Box, IconButton, Paper, Typography, CircularProgress, Alert } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-
-const logos = [
-  {
-    src: "/logos/Digitalindia.png",
-    link: "https://www.india.gov.in/",
-    alt: "India Portal",
-    title: "भारत सरकार"
-  },
-  {
-    src: "/logos/logo_2.png",
-    link: "https://maharashtra.gov.in/",
-    alt: "Maharashtra Govt",
-    title: "महाराष्ट्र सरकार"
-  },
-  {
-    src: "/logos/logo_3.png",
-    link: "https://rural.nic.in/",
-    alt: "Rural Development",
-    title: "ग्रामीण विकास"
-  },
-  {
-    src: "/logos/logo_4.png",
-    link: "https://www.digitalindia.gov.in/",
-    alt: "Digital India",
-    title: "डिजिटल इंडिया"
-  },
-];
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 const GovLogosSection = () => {
+  const [logos, setLogos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [imageLoadErrors, setImageLoadErrors] = useState({});
 
+  // Fetch logos from Firebase
+  useEffect(() => {
+    const fetchLogos = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const logosSnapshot = await getDocs(collection(db, "govLogos"));
+        const logosData = logosSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        
+        // Sort by order if available, otherwise by creation order
+        logosData.sort((a, b) => (a.order || 0) - (b.order || 0));
+        
+        setLogos(logosData);
+        console.log('Fetched logos:', logosData);
+      } catch (error) {
+        console.error('Error fetching logos:', error);
+        setError('लोगो आणण्यात त्रुटी आली');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLogos();
+  }, []);
+
   // Auto-rotate logos
   useEffect(() => {
-    if (!isAutoPlaying) return;
+    if (!isAutoPlaying || logos.length === 0) return;
     
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev === logos.length - 1 ? 0 : prev + 1));
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying]);
+  }, [isAutoPlaying, logos.length]);
 
   const handlePrev = () => {
+    if (logos.length === 0) return;
     setIsAutoPlaying(false);
     setCurrentIndex((prev) => (prev === 0 ? logos.length - 1 : prev - 1));
     setTimeout(() => setIsAutoPlaying(true), 5000);
   };
 
   const handleNext = () => {
+    if (logos.length === 0) return;
     setIsAutoPlaying(false);
     setCurrentIndex((prev) => (prev === logos.length - 1 ? 0 : prev + 1));
     setTimeout(() => setIsAutoPlaying(true), 5000);
@@ -65,6 +74,76 @@ const GovLogosSection = () => {
   const handleLogoClick = (link) => {
     window.open(link, "_blank");
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          minHeight: 200,
+          background: "linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: { xs: 2, sm: 4, lg: 6 },
+          py: { xs: 4, lg: 6 },
+        }}
+      >
+        <Box sx={{ textAlign: 'center', color: 'white' }}>
+          <CircularProgress sx={{ color: 'white', mb: 2 }} />
+          <Typography variant="h6">लोगो आणत आहे...</Typography>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          minHeight: 200,
+          background: "linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: { xs: 2, sm: 4, lg: 6 },
+          py: { xs: 4, lg: 6 },
+        }}
+      >
+        <Alert severity="error" sx={{ color: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}>
+          {error}
+        </Alert>
+      </Box>
+    );
+  }
+
+  // No logos state
+  if (logos.length === 0) {
+    return (
+      <Box
+        sx={{
+          position: "relative",
+          width: "100%",
+          minHeight: 200,
+          background: "linear-gradient(135deg, #f97316 0%, #ea580c 50%, #dc2626 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          px: { xs: 2, sm: 4, lg: 6 },
+          py: { xs: 4, lg: 6 },
+        }}
+      >
+        <Typography variant="h6" sx={{ color: 'white', textAlign: 'center' }}>
+          कोणतेही लोगो उपलब्ध नाहीत
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -300,9 +379,9 @@ const GovLogosSection = () => {
                 zIndex: 10,
               }}
             >
-              {logos.map((_, index) => (
+              {logos.map((logo, index) => (
                 <Box
-                  key={index}
+                  key={logo.id || index}
                   component="button"
                   onClick={() => {
                     setCurrentIndex(index);

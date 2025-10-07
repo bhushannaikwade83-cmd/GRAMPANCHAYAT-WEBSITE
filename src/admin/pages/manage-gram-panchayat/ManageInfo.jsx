@@ -39,29 +39,28 @@ const ManageInfo = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch Gram Panchayat Name
-        const profileDocRef = doc(db, 'grampanchayat', 'profile');
+        // Fetch Gram Panchayat Name from home collection
+        const profileDocRef = doc(db, 'home', 'grampanchayat-info');
         const profileSnap = await getDoc(profileDocRef);
-        if (profileSnap.exists() && profileSnap.data().title) {
-          setGpName(profileSnap.data().title);
+        if (profileSnap.exists() && profileSnap.data().gpName) {
+          setGpName(profileSnap.data().gpName);
         } else {
           setGpName('N/A');
         }
 
-        // Fetch Main Info Details and Photo
-        const infoDocRef = doc(db, 'grampanchayat', 'mainInfo');
+        // Fetch Main Info Details and Photo from home collection
+        const infoDocRef = doc(db, 'home', 'grampanchayat-info');
         const infoSnap = await getDoc(infoDocRef);
         if (infoSnap.exists()) {
           const data = infoSnap.data();
-          const { title, ...restData } = data;
           // migrate legacy 'photo' to new 'photos' array if needed
-          const photos = Array.isArray(restData.photos)
-            ? restData.photos
-            : (restData.photo ? [restData.photo] : []);
+          const photos = Array.isArray(data.photos)
+            ? data.photos
+            : (data.photo ? [data.photo] : []);
           setFormData({
-            details: restData.details || '',
+            details: data.details || '',
             photos,
-            photo: restData.photo || '',
+            photo: data.photo || '',
           });
         }
       } catch (error) {
@@ -105,7 +104,7 @@ const ManageInfo = () => {
     }
     setSaving(true);
     try {
-      const docRef = doc(db, 'grampanchayat', 'mainInfo');
+      const docRef = doc(db, 'home', 'grampanchayat-info');
       // Ensure 'title' is not part of the object being saved here
       const photosArr = Array.isArray(formData.photos) ? formData.photos : [];
       const dataToSave = {
