@@ -9,6 +9,7 @@ const Welcome = () => {
   const [hoveredStat, setHoveredStat] = useState(null);
   const [loading, setLoading] = useState(true);
   const [fetchedStats, setFetchedStats] = useState(null);
+  const [gpName, setGpName] = useState("ग्रामपंचायत");
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -31,10 +32,11 @@ const Welcome = () => {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const ref = doc(db, 'home', 'welcome');
-        const snap = await getDoc(ref);
-        if (snap.exists()) {
-          const data = snap.data();
+        // Fetch welcome stats
+        const welcomeRef = doc(db, 'home', 'welcome');
+        const welcomeSnap = await getDoc(welcomeRef);
+        if (welcomeSnap.exists()) {
+          const data = welcomeSnap.data();
           if (Array.isArray(data?.stats)) {
             setFetchedStats(data.stats);
           } else {
@@ -43,8 +45,18 @@ const Welcome = () => {
         } else {
           setFetchedStats([]);
         }
+
+        // Fetch Gram Panchayat name from profile
+        const profileRef = doc(db, 'grampanchayat', 'profile');
+        const profileSnap = await getDoc(profileRef);
+        if (profileSnap.exists()) {
+          const profileData = profileSnap.data();
+          if (profileData.title) {
+            setGpName(profileData.title);
+          }
+        }
       } catch (e) {
-        console.error('Error fetching welcome stats', e);
+        console.error('Error fetching welcome data', e);
         setFetchedStats([]);
       } finally {
         setLoading(false);
@@ -114,7 +126,7 @@ const Welcome = () => {
           textShadow: '2px 2px 4px rgba(0,0,0,0.2)',
           animation: 'fadeInDown 0.8s ease-out'
         }}>
-          ग्रामपंचायत वर
+          {gpName} वर
         </h1>
 
         {/* Marathi Welcome Message */}

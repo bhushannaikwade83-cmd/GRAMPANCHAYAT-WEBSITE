@@ -1,16 +1,93 @@
-import React from "react";
-import { Box, Container, Grid, Paper, Typography } from "@mui/material";
-
-// Slogan type removed for JS file
-
-const slogans = [
-  { marathi: "झाडे लावा, झाडे जपवा", english: "Plant Trees, Save Trees" },
-  { marathi: "पाणी अडवा, पाणी जिरवा", english: "Save Water, Save Life" },
-  { marathi: "व्यायाम करा, बलवान व्हा", english: "Do Exercise, Be Strong" },
-  { marathi: "मुलगी वाचवा, मुलगी शिकवा", english: "Save Girl, Educate Girl" }
-];
+import React, { useState, useEffect } from "react";
+import { Box, Container, Grid, Paper, Typography, CircularProgress, Alert } from "@mui/material";
+import { db } from "../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 const DigitalSlogans = () => {
+  const [slogans, setSlogans] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch slogans from Firebase
+  useEffect(() => {
+    const fetchSlogans = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const slogansSnapshot = await getDocs(collection(db, "digitalSlogans"));
+        const slogansData = slogansSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        
+        // Sort by order if available, otherwise by creation order
+        slogansData.sort((a, b) => (a.order || 0) - (b.order || 0));
+        
+        setSlogans(slogansData);
+        console.log('Fetched slogans:', slogansData);
+      } catch (error) {
+        console.error('Error fetching slogans:', error);
+        setError('घोषवाक्य आणण्यात त्रुटी आली');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSlogans();
+  }, []);
+
+  // Loading state
+  if (loading) {
+    return (
+      <Box sx={{ width: "100%", bgcolor: "#e6f0fa", color: "rgba(0, 0, 0, 1)", py: 4 }}>
+        <Container maxWidth="lg">
+          <Box sx={{ textAlign: 'center' }}>
+            <CircularProgress sx={{ color: '#658dc6', mb: 2 }} />
+            <Typography variant="h6" sx={{ color: '#658dc6' }}>
+              घोषवाक्य आणत आहे...
+            </Typography>
+          </Box>
+        </Container>
+      </Box>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <Box sx={{ width: "100%", bgcolor: "#e6f0fa", color: "rgba(0, 0, 0, 1)", py: 4 }}>
+        <Container maxWidth="lg">
+          <Alert severity="error" sx={{ backgroundColor: 'rgba(255,255,255,0.9)' }}>
+            {error}
+          </Alert>
+        </Container>
+      </Box>
+    );
+  }
+
+  // No slogans state
+  if (slogans.length === 0) {
+    return (
+      <Box sx={{ width: "100%", bgcolor: "#e6f0fa", color: "rgba(0, 0, 0, 1)", py: 4 }}>
+        <Container maxWidth="lg">
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            gutterBottom
+            textAlign="center"
+            sx={{ fontFamily: "monospace", letterSpacing: 1, mb: 3 }}
+          >
+            संदेश
+          </Typography>
+          <Typography variant="h6" sx={{ textAlign: 'center', color: '#658dc6' }}>
+            कोणतेही घोषवाक्य उपलब्ध नाहीत
+          </Typography>
+        </Container>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ width: "100%", bgcolor: "#e6f0fa", color: "rgba(0, 0, 0, 1)", py: 4 }}>
       <Container maxWidth="lg">
@@ -25,8 +102,8 @@ const DigitalSlogans = () => {
         </Typography>
 
         <Grid container spacing={2}>
-          {slogans.map((item, index) => (
-            <Grid item xs={12} md={6} key={index}>
+          {slogans.map((slogan, index) => (
+            <Grid item xs={12} md={6} key={slogan.id || index}>
               <Paper
                 elevation={4}
                 sx={{
@@ -39,12 +116,12 @@ const DigitalSlogans = () => {
                   animation: `glow 2s ease-in-out infinite alternate`
                 }}
               >
-                <Typography variant="h6">{item.marathi}</Typography>
+                <Typography variant="h6">{slogan.marathi}</Typography>
                 <Typography
                   variant="subtitle1"
                   sx={{ mt: 1, color: "#0f0" }}
                 >
-                  {item.english}
+                  {slogan.english}
                 </Typography>
               </Paper>
             </Grid>
