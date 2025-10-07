@@ -78,12 +78,11 @@ const ManageInfo = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddPhoto = (imageUrl) => {
-    if (!imageUrl) {
-      // treated as remove/cancel by uploader
-      return;
-    }
-    setFormData((prev) => ({ ...prev, photos: [...(prev.photos || []), imageUrl] }));
+  const handleAddPhoto = (urlsOrUrl) => {
+    const toAdd = Array.isArray(urlsOrUrl) ? urlsOrUrl : [urlsOrUrl];
+    const filtered = toAdd.filter(Boolean);
+    if (filtered.length === 0) return; // treated as remove/cancel by uploader
+    setFormData((prev) => ({ ...prev, photos: [...(prev.photos || []), ...filtered] }));
     setNotification({ open: true, message: 'फोटो यशस्वीरित्या अपलोड झाला!', severity: 'success' });
     // reset uploader instance so it becomes ready for next upload
     setUploaderKey((k) => k + 1);
@@ -209,7 +208,7 @@ const ManageInfo = () => {
                   key={uploaderKey}
                   title="नवीन फोटो जोडा"
                   currentImageUrl={null}
-                  onUploadSuccess={(url) => handleAddPhoto(url)}
+                  onUploadSuccess={(urls) => handleAddPhoto(urls)}
                   onUploadError={(m) => setNotification({ open: true, message: m, severity: 'error' })}
                 />
               </Box>
