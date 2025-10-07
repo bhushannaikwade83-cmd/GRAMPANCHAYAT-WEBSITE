@@ -115,9 +115,10 @@ const CloudinaryMultiUploader = ({
       )}
 
       <Button
+        type="button"
         variant="contained"
         startIcon={<PhotoCamera />}
-        onClick={() => fileInputRef.current.click()}
+        onClick={() => fileInputRef.current && fileInputRef.current.click()}
         disabled={uploading || disabled}
         sx={{ borderRadius: 2, mb: 3 }}
       >
