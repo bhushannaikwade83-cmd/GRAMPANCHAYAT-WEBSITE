@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button } from '@mui/material';
-import { db } from '../firebase'; // Firebase db import करा
-import { doc, getDoc } from 'firebase/firestore'; // Firestore functions import करा
+import { db } from '../firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 // Mock Link component
 const Link = ({ to, children, ...props }) => (
@@ -13,14 +13,222 @@ const Link = ({ to, children, ...props }) => (
 // Mock useLocation hook
 const useLocation = () => ({ pathname: "/" });
 
+// Translation dictionary
+const translations = {
+  mr: {
+    "मुख्य पृष्ठ": "मुख्य पृष्ठ",
+    "ग्रामपंचायत": "ग्रामपंचायत",
+    "माहिती": "माहिती",
+    "नकाशा": "नकाशा",
+    "सदस्य": "सदस्य",
+    "ग्रामसभेचे निर्णय": "ग्रामसभेचे निर्णय",
+    "पुरस्कार": "पुरस्कार",
+    "कार्यक्रम": "कार्यक्रम",
+    "सुविधा": "सुविधा",
+    "ई-सेवा": "ई-सेवा",
+    "पर्यटन सथळे": "पर्यटन सथळे",
+    "निर्देशिका": "निर्देशिका",
+    "जनगणना": "जनगणना",
+    "दूरध्वनी क्रमांक": "दूरध्वनी क्रमांक",
+    "हेल्पलाईन": "हेल्पलाईन",
+    "रुग्णालय": "रुग्णालय",
+    "उपक्रम": "उपक्रम",
+    "स्वच्छ गाव": "स्वच्छ गाव",
+    "विकेल-ते-पिकेल": "विकेल-ते-पिकेल",
+    "माझे-कुटुंब माझी-जबाबदारी": "माझे-कुटुंब माझी-जबाबदारी",
+    "तंटामुक्त गाव": "तंटामुक्त गाव",
+    "जलयुक्त शिवार": "जलयुक्त शिवार",
+    "तुषारगावड": "तुषारगावड",
+    "रोती पूरक व्यवसाय": "रोती पूरक व्यवसाय",
+    "गादोली": "गादोली",
+    "मतदार नोंदणी": "मतदार नोंदणी",
+    "सर्व शिक्षा अभियान": "सर्व शिक्षा अभियान",
+    "क्रीडा स्पर्धा": "क्रीडा स्पर्धा",
+    "आरोग्य शिबिर": "आरोग्य शिबिर",
+    "कचऱ्याचे नियोजन": "कचऱ्याचे नियोजन",
+    "बायोगॅस निर्मिती": "बायोगॅस निर्मिती",
+    "सेंद्रिय खत निर्मिती": "सेंद्रिय खत निर्मिती",
+    "योजना": "योजना",
+    "राज्य सरकार योजना": "राज्य सरकार योजना",
+    "केंद्र सरकार योजना": "केंद्र सरकार योजना",
+    "प्रगत शेतकरी": "प्रगत शेतकरी",
+    "ई-शिक्षण": "ई-शिक्षण",
+    "बातम्या": "बातम्या",
+    "संपर्क": "संपर्क",
+    "तक्रार नोंदणी": "तक्रार नोंदणी",
+    "मेनू": "मेनू",
+    "शोधा...": "शोधा...",
+    "कोणतेही परिणाम सापडले नाहीत": "कोणतेही परिणाम सापडले नाहीत",
+    "मुख्य": "मुख्य"
+  },
+  en: {
+    "मुख्य पृष्ठ": "Home",
+    "ग्रामपंचायत": "Gram Panchayat",
+    "माहिती": "Information",
+    "नकाशा": "Map",
+    "सदस्य": "Members",
+    "ग्रामसभेचे निर्णय": "Gram Sabha Decisions",
+    "पुरस्कार": "Awards",
+    "कार्यक्रम": "Programs",
+    "सुविधा": "Facilities",
+    "ई-सेवा": "E-Services",
+    "पर्यटन सथळे": "Tourist Places",
+    "निर्देशिका": "Directory",
+    "जनगणना": "Census",
+    "दूरध्वनी क्रमांक": "Phone Numbers",
+    "हेल्पलाईन": "Helpline",
+    "रुग्णालय": "Hospital",
+    "उपक्रम": "Initiatives",
+    "स्वच्छ गाव": "Clean Village",
+    "विकेल-ते-पिकेल": "Sell-to-Buy",
+    "माझे-कुटुंब माझी-जबाबदारी": "My Family My Responsibility",
+    "तंटामुक्त गाव": "Conflict Free Village",
+    "जलयुक्त शिवार": "Water Enriched Area",
+    "तुषारगावड": "Tushar Gaon",
+    "रोती पूरक व्यवसाय": "Supplementary Business",
+    "गादोली": "Gadoli",
+    "मतदार नोंदणी": "Voter Registration",
+    "सर्व शिक्षा अभियान": "Education For All",
+    "क्रीडा स्पर्धा": "Sports Competition",
+    "आरोग्य शिबिर": "Health Camp",
+    "कचऱ्याचे नियोजन": "Waste Management",
+    "बायोगॅस निर्मिती": "Biogas Production",
+    "सेंद्रिय खत निर्मिती": "Organic Fertilizer Production",
+    "योजना": "Schemes",
+    "राज्य सरकार योजना": "State Government Schemes",
+    "केंद्र सरकार योजना": "Central Government Schemes",
+    "प्रगत शेतकरी": "Progressive Farmer",
+    "ई-शिक्षण": "E-Learning",
+    "बातम्या": "News",
+    "संपर्क": "Contact",
+    "तक्रार नोंदणी": "Complaint Registration",
+    "मेनू": "Menu",
+    "शोधा...": "Search...",
+    "कोणतेही परिणाम सापडले नाहीत": "No results found",
+    "मुख्य": "Main"
+  }
+};
+
+// NLP Search: Synonyms and keywords for better matching
+const searchSynonyms = {
+  mr: {
+    "माहिती": ["माहिती", "विवरण", "डेटा", "तपशील"],
+    "नकाशा": ["नकाशा", "मॅप", "स्थान"],
+    "सदस्य": ["सदस्य", "सभासद", "प्रतिनिधी"],
+    "पुरस्कार": ["पुरस्कार", "बक्षीस", "सन्मान"],
+    "कार्यक्रम": ["कार्यक्रम", "सण", "उत्सव", "इव्हेंट"],
+    "जनगणना": ["जनगणना", "लोकसंख्या", "सर्वेक्षण"],
+    "दूरध्वनी": ["दूरध्वनी", "फोन", "नंबर", "संपर्क"],
+    "रुग्णालय": ["रुग्णालय", "हॉस्पिटल", "आरोग्य", "उपचार"],
+    "योजना": ["योजना", "स्कीम", "प्रकल्प"],
+    "शेतकरी": ["शेतकरी", "शेती", "कृषी", "farmer"],
+    "शिक्षण": ["शिक्षण", "अध्ययन", "शिक्षा", "education"],
+    "बातम्या": ["बातम्या", "न्यूज", "समाचार", "news"],
+    "संपर्क": ["संपर्क", "contact", "फोन", "पत्ता"],
+    "तक्रार": ["तक्रार", "complaint", "समस्या", "issue"]
+  },
+  en: {
+    "information": ["information", "info", "details", "data"],
+    "map": ["map", "location", "nakasha"],
+    "members": ["members", "representatives", "sadasya"],
+    "awards": ["awards", "prizes", "puraskaar"],
+    "programs": ["programs", "events", "karyakram", "festivals"],
+    "census": ["census", "population", "survey"],
+    "phone": ["phone", "contact", "number", "durdhvani"],
+    "hospital": ["hospital", "health", "rugnalaya"],
+    "schemes": ["schemes", "yojana", "projects"],
+    "farmer": ["farmer", "agriculture", "shetkari"],
+    "education": ["education", "learning", "shikshan"],
+    "news": ["news", "batmya", "updates"],
+    "contact": ["contact", "sampark", "phone"],
+    "complaint": ["complaint", "takrar", "issue"]
+  }
+};
+
+const translate = (text, lang) => {
+  return translations[lang][text] || text;
+};
+
+// Advanced NLP search with fuzzy matching and synonym support
+const nlpSearch = (query, items, language) => {
+  if (!query || query.trim() === "") return [];
+
+  const queryLower = query.toLowerCase().trim();
+  const words = queryLower.split(/\s+/);
+  
+  const scored = items.map(item => {
+    let score = 0;
+    const titleLower = item.title.toLowerCase();
+    const categoryLower = item.category.toLowerCase();
+    const fullTextLower = item.fullText.toLowerCase();
+    
+    // Exact match - highest score
+    if (titleLower === queryLower) score += 100;
+    if (categoryLower === queryLower) score += 80;
+    
+    // Starts with query
+    if (titleLower.startsWith(queryLower)) score += 70;
+    if (categoryLower.startsWith(queryLower)) score += 50;
+    
+    // Contains query
+    if (titleLower.includes(queryLower)) score += 40;
+    if (fullTextLower.includes(queryLower)) score += 30;
+    
+    // Word-by-word matching
+    words.forEach(word => {
+      if (titleLower.includes(word)) score += 20;
+      if (categoryLower.includes(word)) score += 15;
+      
+      // Check synonyms
+      const langSynonyms = searchSynonyms[language === "mr" ? "mr" : "en"];
+      Object.entries(langSynonyms).forEach(([key, synonyms]) => {
+        if (synonyms.some(syn => syn.includes(word) || word.includes(syn))) {
+          if (titleLower.includes(key) || categoryLower.includes(key)) {
+            score += 25;
+          }
+        }
+      });
+    });
+    
+    // Fuzzy matching - allow 1-2 character differences
+    const levenshteinDistance = (s1, s2) => {
+      const len1 = s1.length, len2 = s2.length;
+      const matrix = Array(len1 + 1).fill(null).map(() => Array(len2 + 1).fill(0));
+      
+      for (let i = 0; i <= len1; i++) matrix[i][0] = i;
+      for (let j = 0; j <= len2; j++) matrix[0][j] = j;
+      
+      for (let i = 1; i <= len1; i++) {
+        for (let j = 1; j <= len2; j++) {
+          const cost = s1[i - 1] === s2[j - 1] ? 0 : 1;
+          matrix[i][j] = Math.min(
+            matrix[i - 1][j] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j - 1] + cost
+          );
+        }
+      }
+      return matrix[len1][len2];
+    };
+    
+    const distance = levenshteinDistance(queryLower, titleLower);
+    if (distance <= 2) score += 35 - (distance * 10);
+    
+    return { ...item, score };
+  });
+  
+  return scored
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 8);
+};
+
 // Normalize paths
 const isPathMatch = (locationPath, parentName, itemName) => {
-  // Special case for "कार्यक्रम" which should map to "सण-उत्सव"
   if (parentName === "ग्रामपंचायत" && itemName === "कार्यक्रम") {
     return locationPath === "/ग्रामपंचायत-सण-उत्सव";
   }
   
-  // Replace spaces and slashes with dashes to match App.jsx route format
   const normalizeDash = str => str.replace(/[\s\/]+/g, "-");
   const normalizeConcat = str => str.replace(/\s+/g, "");
   const normalizeSpace = str => str;
@@ -30,9 +238,7 @@ const isPathMatch = (locationPath, parentName, itemName) => {
   return locationPath === dashed || locationPath === concat || locationPath === space;
 };
 
-// Generate link path (use dashes for both parent and item; convert slashes)
 const getLinkPath = (parentName, itemName) => {
-  // Special case for "कार्यक्रम" which should map to "सण-उत्सव"
   if (parentName === "ग्रामपंचायत" && itemName === "कार्यक्रम") {
     return "/ग्रामपंचायत-सण-उत्सव";
   }
@@ -40,7 +246,7 @@ const getLinkPath = (parentName, itemName) => {
 };
 
 // Dropdown Button
-const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentName, location }) => {
+const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentName, location, language }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -75,7 +281,7 @@ const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentN
           boxShadow: isHovered ? '0 4px 12px rgba(0,0,0,0.15)' : 'none'
         }}
       >
-        {title}
+        {translate(title, language)}
         <span style={{
           fontSize: "20px",
           transition: "transform 0.3s",
@@ -127,7 +333,7 @@ const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentN
                 }
               }}
             >
-              {item}
+              {translate(item, language)}
             </Link>
           ))}
         </div>
@@ -148,7 +354,7 @@ const DropdownButton = ({ title, anchor, handleOpen, handleClose, items, parentN
 };
 
 // Mobile Menu
-const MobileMenu = ({ isOpen, onClose, navLinks, location }) => {
+const MobileMenu = ({ isOpen, onClose, navLinks, location, language }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
 
   if (!isOpen) return null;
@@ -175,7 +381,7 @@ const MobileMenu = ({ isOpen, onClose, navLinks, location }) => {
         borderBottom: '1px solid #ddd',
         background: 'white'
       }}>
-        <h3 style={{ margin: 0, color: 'black' }}>मेनू</h3>
+        <h3 style={{ margin: 0, color: 'black' }}>{translate("मेनू", language)}</h3>
         <button
           onClick={onClose}
           style={{ background: 'none', border: 'none', fontSize: '24px', cursor: 'pointer', color: 'black' }}
@@ -206,7 +412,7 @@ const MobileMenu = ({ isOpen, onClose, navLinks, location }) => {
                     color: 'black'
                   }}
                 >
-                  {link.name}
+                  {translate(link.name, language)}
                   <span style={{
                     transition: 'transform 0.3s',
                     transform: openDropdown === link.name ? 'rotate(180deg)' : 'rotate(0)'
@@ -226,7 +432,7 @@ const MobileMenu = ({ isOpen, onClose, navLinks, location }) => {
                           fontWeight: isPathMatch(location.pathname, link.name, item) ? 'bold' : 'normal'
                         }}
                       >
-                        {item}
+                        {translate(item, language)}
                       </Link>
                     ))}
                   </div>
@@ -244,7 +450,7 @@ const MobileMenu = ({ isOpen, onClose, navLinks, location }) => {
                   color: location.pathname === link.to ? '#2196f3' : 'black'
                 }}
               >
-                {link.name}
+                {translate(link.name, language)}
               </Link>
             )}
           </div>
@@ -279,7 +485,6 @@ const Navbar = () => {
       try {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
-          // 'title' field मधून नाव घ्या
           setGrampanchayatName(docSnap.data().title || "ग्रामपंचायत नाव");
         }
       } catch (error) {
@@ -291,7 +496,6 @@ const Navbar = () => {
 
   const navLinks = [
     { name: "मुख्य पृष्ठ", to: "/" },
-    // Keep display names as-is; path builder will convert to App routes
     { name: "ग्रामपंचायत", dropdown: ["माहिती", "नकाशा", "सदस्य", "ग्रामसभेचे निर्णय", "पुरस्कार", "कार्यक्रम", "सुविधा", "ई-सेवा", "पर्यटन सथळे"] },
     { name: "निर्देशिका", dropdown: ["जनगणना", "दूरध्वनी क्रमांक", "हेल्पलाईन", "रुग्णालय"] },
     { name: "उपक्रम", dropdown: ["स्वच्छ गाव", "विकेल-ते-पिकेल", "माझे-कुटुंब माझी-जबाबदारी", "तंटामुक्त गाव", "जलयुक्त शिवार", "तुषारगावड", "रोती पूरक व्यवसाय", "गादोली", "मतदार नोंदणी", "सर्व शिक्षा अभियान", "क्रीडा स्पर्धा", "आरोग्य शिबिर", "कचऱ्याचे नियोजन", "बायोगॅस निर्मिती", "सेंद्रिय खत निर्मिती"] },
@@ -367,12 +571,8 @@ const Navbar = () => {
       return;
     }
 
-    // Filter search results
-    const filtered = searchableItems.filter((item) =>
-      item.fullText.toLowerCase().includes(query.toLowerCase()) ||
-      item.title.toLowerCase().includes(query.toLowerCase())
-    ).slice(0, 8); // Limit to 8 results like Google
-
+    // Use NLP search instead of simple filter
+    const filtered = nlpSearch(query, searchableItems, language);
     setSearchResults(filtered);
   };
 
@@ -497,7 +697,7 @@ const Navbar = () => {
                       value={searchQuery} 
                       onChange={handleSearchChange}
                       onKeyDown={handleKeyDown}
-                      placeholder={language === "mr" ? "शोधा..." : "Search..."} 
+                      placeholder={translate("शोधा...", language)} 
                       style={{ 
                         marginLeft: '12px', 
                         flex: 1, 
@@ -581,7 +781,7 @@ const Navbar = () => {
                               marginBottom: '2px'
                             }}
                             dangerouslySetInnerHTML={{ 
-                              __html: highlightMatch(result.title, searchQuery) 
+                              __html: highlightMatch(translate(result.title, language), searchQuery) 
                             }}
                           />
                           <div style={{ 
@@ -591,7 +791,7 @@ const Navbar = () => {
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap'
                           }}>
-                            {result.category}
+                            {translate(result.category, language)}
                           </div>
                         </div>
                         <span style={{
@@ -623,7 +823,7 @@ const Navbar = () => {
                     border: '1px solid #e0e0e0'
                   }}>
                     <div style={{ fontSize: '14px', color: '#666' }}>
-                      {language === "mr" ? "कोणतेही परिणाम सापडले नाहीत" : "No results found"}
+                      {translate("कोणतेही परिणाम सापडले नाहीत", language)}
                     </div>
                   </div>
                 )}
@@ -652,6 +852,7 @@ const Navbar = () => {
                   items={link.dropdown}
                   parentName={link.name}
                   location={location}
+                  language={language}
                 />
               ) : (
                 <Link key={i} to={link.to} style={{
@@ -660,7 +861,7 @@ const Navbar = () => {
                   color: location.pathname === link.to ? 'white' : 'black',
                   background: location.pathname === link.to ? 'linear-gradient(45deg, #2196f3, #21cbf3)' : 'transparent',
                   boxShadow: location.pathname === link.to ? '0 4px 15px rgba(33, 150, 243, 0.3)' : 'none'
-                }}>{link.name}</Link>
+                }}>{translate(link.name, language)}</Link>
               )
             )}
           </div>
@@ -668,7 +869,7 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile Menu */}
-      <MobileMenu isOpen={mobileOpen} onClose={() => setMobileOpen(false)} navLinks={navLinks} location={location} />
+      <MobileMenu isOpen={mobileOpen} onClose={() => setMobileOpen(false)} navLinks={navLinks} location={location} language={language} />
     </div>
   );
 };
